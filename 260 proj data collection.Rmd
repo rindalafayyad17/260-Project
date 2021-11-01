@@ -1,0 +1,186 @@
+---
+title: "260 Project rough start"
+output: html_document
+---
+
+Let's start this 260 project.
+
+First we can upload the cost of living (COL) for Boston, MA. Would you look at that, it is pretty expensive to live in Boston. 
+
+```{r, warning=FALSE, message=FALSE}
+# read in packages
+library(tidyverse)
+library(stringr)
+library(readr)
+library(rvest)
+library(lubridate)
+library(pander)
+library(httr)
+
+```
+
+```{r}
+# boston only 
+# eventually create a vector of cities, pass through url
+
+
+url <- "https://www.numbeo.com/cost-of-living/in/Boston"
+
+tab <- read_html(url) %>% html_nodes("table")
+
+cost_table <- html_table(tab)[[2]]
+cost_table
+
+
+# cost of housing metrics
+# cost per sq ft in city center
+apartment_city <- cost_table[cost_table$Restaurants == "Apartment (1 bedroom) in City Centre",]
+
+# cost per sq ft outside city center 
+apartment_out <- cost_table[cost_table$Restaurants == "Apartment (1 bedroom) Outside of Centre",]
+
+# average monthly salary 
+salary <- cost_table[cost_table$Restaurants == "Average Monthly Net Salary (After Tax)",]
+
+
+# cost of food metrics
+# cost per inexpensive meal at restaurant
+cheap_rest <- cost_table[cost_table$Restaurants == "Meal, Inexpensive Restaurant",]
+
+# cost per two person dinner
+exp_rest <- cost_table[cost_table$Restaurants == "Meal for 2 People, Mid-range Restaurant, Three-course",]
+
+
+# cost of utilities metrics 
+# basic utilities
+basic_util <- cost_table[cost_table$Restaurants == "Basic (Electricity, Heating, Cooling, Water, Garbage) for 915 sq ft Apartment",]
+
+# cost of wifi
+wifi <- cost_table[cost_table$Restaurants == "Internet (60 Mbps or More, Unlimited Data, Cable/ADSL)",]
+
+
+# create dataframe of the above
+boston <- rbind(apartment_city,apartment_out, salary, cheap_rest, exp_rest, basic_util, wifi) %>% 
+  rename(metrics = Restaurants, 
+         price = Edit) %>% 
+  select(metrics, price)
+
+# make cleanup prices a function
+# removes money signs, commas and whitespaces 
+cln_price <- function(citydata){
+  citydata <- citydata %>% 
+    mutate(price = str_replace(price, "\\$", "")) %>%
+    mutate(price = str_replace(price, "\\,", "")) %>% 
+    mutate(price = str_trim(price)) %>% 
+    mutate(price = as.numeric(price, digits = 7))
+  return(citydata)
+}
+
+#pass our boston data to be cleaned
+boston <- cln_price(boston)
+
+head(boston)
+
+# add a column with city name, will need to be made into a function
+boston <- boston %>% 
+  mutate(city = "boston") 
+
+addcity <- function(citydata){
+  citydata <- citydata
+}
+
+# finally just to see our result  
+boston %>%  pander()
+```
+
+Boston is neat to know, but what about other cities? After all, we will be job hunting soon and would like to know what it is going to cost us to live in these new cities. 
+
+Scraping the data responsibly by using the slowly() function in the httr package, we can get data for the following 50 cities in the United States. These cities were selected from a list of top/most populated cities in the US. 
+
+An important note is that we are only looking at certain rows here from the original numbeo dataset, this helps to keep the appearance of our data tidy as well as keep the cleaning function simple. We can choose to add any rows of interest very simply below if we wish to include something like the price of milk, eggs, childcare, etc. 
+
+```{r}
+## --> denotes lines that should be run but will not run to not swarm the server 
+
+
+
+# testing
+alldata <- data.frame()
+# create  cities list
+cities_list <- c("Los-Angeles", "New-York", "Chicago", "Houston", "Phoenix", "Philadelphia", "San-Antonio", "San-Diego", "Dallas", "San-Jose", "Austin", "Jacksonville", "Fort-Worth", "Columbus", "Charlotte", "San-Francisco", "Indianapolis", "Seattle", "Denver", "Boston", "El-Paso", "Washington", "Nashville", "Detroit", "Oklahoma-City", "Portland", "Las-Vegas", "Memphis", "Louisville", "Baltimore", "Milwaukee", "Albuquerque", "Tucson", "Fresno", "Mesa", "Sacramento", "Atlanta", "Kansas-City", "Colorado-Springs", "Omaha", "Raleigh", "Miami", "Long-Beach", "Virginia-Beach", "Oakland", "Minneapolis", "Tulsa", "Tampa", "Arlington", "New-Orleans" )
+
+
+#############################################################
+# Functions
+############################################################
+
+#time delayed get
+throttled_read_html <- slowly(~ read_html(.),
+                    rate = rate_delay(0.5))
+
+ make_df <- function(cities){
+   alldata <- data.frame()
+   for(i in 1: length(cities)){
+    # want to end up with length of cities cost tables
+    # webscrape
+     url <- paste0("https://www.numbeo.com/cost-of-living/in/", cities[i])
+     tab <- throttled_read_html(url) %>% html_nodes("table")
+    # create inital cost of living table
+     cost_table <- html_table(tab)[[2]]
+    # want to add column of city = city name
+    # rename some columns
+    # select columns (basically exclude range column)
+     cost_table <- cost_table %>% 
+       mutate(city = as.character(cities[i])) %>% 
+       rename(metrics = Restaurants, price = Edit) %>% 
+       select(city,metrics,price)
+    # select important rows
+    # cost per sq ft in city center
+     apartment_city <- cost_table[cost_table$metrics == "Apartment (1 bedroom) in City Centre",]
+    # cost per sq ft outside city center 
+     apartment_out <- cost_table[cost_table$metrics == "Apartment (1 bedroom) Outside of Centre",]
+    # average monthly salary 
+     salary <- cost_table[cost_table$metrics == "Average Monthly Net Salary (After Tax)",]
+    # cost of food metrics
+    # cost per inexpensive meal at restaurant
+     cheap_rest <- cost_table[cost_table$metrics == "Meal, Inexpensive Restaurant",]
+    # cost per two person dinner
+     exp_rest <- cost_table[cost_table$metrics == "Meal for 2 People, Mid-range Restaurant, Three-course",]
+    # cost of utilities metrics 
+    # basic utilities
+     basic_util <- cost_table[cost_table$metrics == "Basic (Electricity, Heating, Cooling, Water, Garbage) for 915 sq ft Apartment",]
+    # cost of wifi
+     wifi <- cost_table[cost_table$metrics == "Internet (60 Mbps or More, Unlimited Data, Cable/ADSL)",]
+    # create dataframe of the above
+    # will change for every city
+     citydata <- rbind(apartment_city,apartment_out, salary, cheap_rest, exp_rest, basic_util, wifi)
+    # bind new cost table to previous cost tables 
+     alldata <- bind_rows(alldata,citydata)
+   }
+   return(alldata)
+   }
+
+# Clean data function
+cln_price <- function(citydata){
+  citydata <- citydata %>% 
+    mutate(price = str_replace(price, "\\$", "")) %>%
+    mutate(price = str_replace(price, "\\,", "")) %>% 
+    mutate(price = str_trim(price)) %>% 
+    mutate(price = as.numeric(price, digits = 7)) %>% 
+    mutate(city = str_replace(city, "\\-", " "))
+  return(citydata)
+}
+
+
+#################################
+# Data collecting and cleaning
+################################
+
+## mydata <- make_df(cities_list)
+## mydata <- cln_price(mydata)
+## write_csv(mydata, "/mycsv.csv")
+
+
+
+
+```
