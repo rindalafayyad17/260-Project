@@ -241,3 +241,48 @@ temp <- read.csv(file = "col_citydata.csv", header = TRUE)
 View(temp)
 ```
 
+
+
+```{r}
+alldata <- data.frame()
+
+cities_list <- c("Los-Angeles", "New-York", "Chicago", "Houston", "Phoenix", "Philadelphia", "San-Antonio", "San-Diego", "Dallas", "San-Jose", "Austin", "Jacksonville", "Fort-Worth", "Columbus", "Charlotte", "San-Francisco", "Indianapolis", "Seattle", "Denver", "Boston", "El-Paso", "Washington", "Nashville", "Detroit", "Oklahoma-City", "Portland", "Las-Vegas", "Memphis", "Louisville", "Baltimore", "Milwaukee", "Albuquerque", "Tucson", "Fresno", "Mesa", "Sacramento", "Atlanta", "Kansas-City", "Colorado-Springs", "Omaha", "Raleigh", "Miami", "Long-Beach", "Virginia-Beach", "Oakland", "Minneapolis", "Tulsa", "Tampa", "Arlington", "New-Orleans" )
+
+#time delayed get
+throttled_read_html <- slowly(~ read_html(.),
+                    rate = rate_delay(0.5))
+
+ make_df <- function(cities){
+   alldata <- data.frame()
+   for(i in 1: length(cities)){
+    # want to end up with length of cities cost tables
+    # webscrape
+     url <- paste0("https://www.numbeo.com/cost-of-living/in/", cities[i])
+     tab <- throttled_read_html(url) %>% html_nodes("table")
+    # create inital cost of living table
+     cost_table <- html_table(tab)[[2]]
+    # want to add column of city = city name
+    # rename some columns
+    # select columns (basically exclude range column)
+     cost_table <- cost_table %>% 
+       mutate(city = as.character(cities[i])) %>% 
+       rename(metrics = Restaurants, price = Edit) %>% 
+       select(city,metrics,price)
+      alldata <- bind_rows(alldata,cost_table)
+   }
+   return(alldata)
+   }
+
+# Clean data function
+cln_price <- function(citydata){
+  citydata <- citydata %>% 
+    mutate(price = str_replace(price, "\\$", "")) %>%
+    mutate(price = str_replace(price, "\\,", "")) %>% 
+    mutate(price = str_trim(price)) %>% 
+    mutate(price = as.numeric(price, digits = 7)) %>% 
+    mutate(city = str_replace(city, "\\-", " "))
+  return(citydata)
+}
+
+mydata <- make_df(cities_list)
+```
