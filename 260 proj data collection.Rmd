@@ -200,31 +200,35 @@ sub <- sub %>% separate(AREA_TITLE, c("City", "State"), sep = ",")
 
 cities <- c("Los Angeles", "New York", "Chicago", "Houston", "Phoenix", "Philadelphia", "San Antonio", "San Diego", "Dallas", "San Jose", "Austin", "Jacksonville", "Fort Worth", "Columbus", "Charlotte", "San Francisco", "Indianapolis", "Seattle", "Denver", "Boston", "El Paso", "Washington", "Nashville", "Detroit", "Oklahoma City", "Portland", "Las Vegas", "Memphis", "Louisville", "Baltimore", "Milwaukee", "Albuquerque", "Tucson", "Fresno", "Mesa", "Sacramento", "Atlanta", "Kansas City", "Colorado Springs", "Omaha", "Raleigh", "Miami", "Long Beach", "Virginia Beach", "Oakland", "Minneapolis", "Tulsa", "Tampa", "Arlington", "New Orleans" )
 
-sep_cities <- sub %>% separate(City, c("City1", "City2", "City3"), sep = "-")
+sep_cities <- sub %>% separate(City, c("City1", "City2", "City3"), sep = "-") #seperating the entries that include multiple city names into different columns
 
 df1 <- sep_cities %>% 
   select(- c("City2", "City3"))
 colnames(df1)[1] <- "City"
+#creating a new data frame with the first city column only
 
 df2 <- sep_cities %>%
   select(-c("City1", "City3"))
 colnames(df2)[1] <- "City"
+#creating a new data frame with the second city column only
 
 df3 <- sep_cities %>%
   select(-c("City1", "City2"))
 colnames(df3)[1] <- "City"
+#creating a new dataframe with the third city column only
 
-one_city <- rbind(df1, df2, df3)
-one_city$City[one_city$City == "Louisville/Jefferson County"] <- "Louisville"
+one_city <- rbind(df1, df2, df3) #stacking the three data frames above on top of each other to get only one column for the cities where each row corresponds to one city only 
 
-final <- one_city %>% filter(City %in% cities) %>% select(-State)
+one_city$City[one_city$City == "Louisville/Jefferson County"] <- "Louisville" #renaming this city entry to Louisville only
+
+final <- one_city %>% filter(City %in% cities) %>% select(-State) #final data frame with city only without the state
 
 length(unique(final$City))
 not_included <- ! (cities %in% final$City)
 cities[not_included]
 #all the cities are included in the final dataset
 
-colnames(final) <- c("City", "Occupation", "Hourly Wage", "Annual Wage")
+colnames(final) <- c("City", "Occupation", "Hourly Wage", "Annual Wage") #renaming the columns
 
 final$`Hourly Wage`[final$`Hourly Wage` == "*"] <- NA
 final$`Annual Wage`[final$`Annual Wage` == "*"] <- NA
@@ -235,6 +239,7 @@ View(final)
 
 
 ```
+
 
 ```{r}
 temp <- read.csv(file = "col_citydata.csv", header = TRUE)
@@ -286,3 +291,27 @@ cln_price <- function(citydata){
 
 mydata <- make_df(cities_list)
 ```
+
+```{r}
+library(rpart)
+citydata <- read.csv("col_citydata.csv", header = TRUE)
+rows_to_cols <- citydata %>% spread(metrics, price)
+colnames(rows_to_cols) <- c("city", "apt_in_center", "apt_out_center", "salary", "basics", "internet", "meal_for_2", "inexpensive_meal")
+#predicting average salary based on the other metrics
+
+salary_lm <- lm(salary ~ apt_in_center + apt_out_center + basics + internet + inexpensive_meal, data = rows_to_cols)
+summary(salary_lm)
+
+fit_rpart <- rpart(salary ~ apt_in_center + apt_out_center + basics + internet + inexpensive_meal, data = rows_to_cols) 
+rpart.plot(fit_rpart, digits = 4)
+
+fit <- tree(salary ~ apt_in_center + apt_out_center + basics + internet + inexpensive_meal, data = rows_to_cols)
+plot(fit, type = "uniform")
+text(fit, cex = 1)
+
+#the rpart plot is prettier, but the second tree gives more info. 
+
+```
+
+
+
