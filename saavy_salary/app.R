@@ -8,7 +8,7 @@ library(gridExtra)
 #############################
 
 # wages dataset
-wages <- read_csv("wagesnew.csv")
+wages <- read_csv("wages_norepeats.csv")
 wages <- as_tibble(wages) %>%
     rename(city = City, occupation = Occupation, hourly = 'Hourly Wage', annual = 'Annual Wage')
 
@@ -75,6 +75,7 @@ server <- function(input, output) {
         paste0( "The mean salary in ", as.character(input$mycity) ," is $",  round(as.numeric(mean_salary), 2))
     })
     
+    # first plot of salary by occupations
     output$jobsalary <- renderPlot(
         wages %>%
             filter(occupation == input$myjob) %>%
@@ -91,7 +92,7 @@ server <- function(input, output) {
                   plot.title = element_text(face = "bold"),
                   plot.title.position = "plot") +
             scale_x_continuous(expand = c(0,0), labels = scales::comma)+
-            geom_text(aes(label = paste0("$",annual), x = annual + 5000), size = 2.8, fontface = "bold")
+            geom_text(aes(label = paste0("$",annual), x = annual + 2500), size = 2.8, fontface = "bold")
     )
     
     
