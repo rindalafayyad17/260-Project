@@ -3,12 +3,12 @@ library(shiny)
 library(tidyverse)
 library(ggthemes)
 library(ggrepel)
-library(grid)
+library(gridExtra)
 
 #############################
 
 # wages dataset
-wages <- read_csv("/Users/danielherrera/Documents/wages_260.csv")
+wages <- read_csv("wagesnew.csv")
 wages <- as_tibble(wages) %>%
     rename(city = City, occupation = Occupation, hourly = 'Hourly Wage', annual = 'Annual Wage')
 
@@ -17,10 +17,11 @@ wages <- wages %>%
     mutate(annual  = recode(annual,
                             ">208000" = 'NA'
     )) %>%
+    mutate(annual = str_remove(annual, ",")) %>% 
     mutate(annual = as.numeric(annual))
 
 # cost of living:col dataset
-cost <- read_csv("/Users/danielherrera/Documents/cost_living.csv")
+cost <- read_csv("col_citydata.csv")
 
 
 
