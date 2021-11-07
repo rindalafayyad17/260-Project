@@ -200,7 +200,7 @@ sub <- sub %>% separate(AREA_TITLE, c("City", "State"), sep = ",")
 
 cities <- c("Los Angeles", "New York", "Chicago", "Houston", "Phoenix", "Philadelphia", "San Antonio", "San Diego", "Dallas", "San Jose", "Austin", "Jacksonville", "Fort Worth", "Columbus", "Charlotte", "San Francisco", "Indianapolis", "Seattle", "Denver", "Boston", "El Paso", "Washington", "Nashville", "Detroit", "Oklahoma City", "Portland", "Las Vegas", "Memphis", "Louisville", "Baltimore", "Milwaukee", "Albuquerque", "Tucson", "Fresno", "Mesa", "Sacramento", "Atlanta", "Kansas City", "Colorado Springs", "Omaha", "Raleigh", "Miami", "Long Beach", "Virginia Beach", "Oakland", "Minneapolis", "Tulsa", "Tampa", "Arlington", "New Orleans" )
 
-sep_cities <- sub %>% separate(City, c("City1", "City2", "City3"), sep = "-") #seperating the entries that include multiple city names into different columns
+sep_cities <- sub %>% separate(City, c("City1", "City2", "City3"), sep = "-") #separating the entries that include multiple city names into different columns
 
 df1 <- sep_cities %>% 
   select(- c("City2", "City3"))
@@ -215,7 +215,7 @@ colnames(df2)[1] <- "City"
 df3 <- sep_cities %>%
   select(-c("City1", "City2"))
 colnames(df3)[1] <- "City"
-#creating a new dataframe with the third city column only
+#creating a new data frame with the third city column only
 
 one_city <- rbind(df1, df2, df3) #stacking the three data frames above on top of each other to get only one column for the cities where each row corresponds to one city only 
 
@@ -239,6 +239,26 @@ View(final)
 
 
 ```
+```{r}
+final <- final %>% arrange(City, Occupation)
+
+mat <- matrix(ncol = 4, nrow = 0)
+no_repeats <- as.data.frame(mat)
+colnames(no_repeats) <- c("City", "Occupation", "Hourly Wage", "Annual Wage")
+
+for (i in 1:nrow(final)){
+  if (final$Occupation[i] != final$Occupation[min(nrow(final),i+1)]){
+    no_repeats[i,] <- final[i,]
+    
+  }
+}
+
+no_repeats <- no_repeats %>% filter(!(City %in% NA))
+View(no_repeats)
+
+write.csv(no_repeats,"C:/Users/Rindala/Desktop/Harvard/FALL 2021/BST 260/260-Project\\wages_norepeats.csv", row.names = FALSE)
+```
+
 
 
 ```{r}
@@ -294,9 +314,11 @@ mydata <- make_df(cities_list)
 
 ```{r}
 library(rpart)
+
 citydata <- read.csv("col_citydata.csv", header = TRUE)
 rows_to_cols <- citydata %>% spread(metrics, price)
 colnames(rows_to_cols) <- c("city", "apt_in_center", "apt_out_center", "salary", "basics", "internet", "meal_for_2", "inexpensive_meal")
+
 #predicting average salary based on the other metrics
 
 salary_lm <- lm(salary ~ apt_in_center + apt_out_center + basics + internet + inexpensive_meal, data = rows_to_cols)
