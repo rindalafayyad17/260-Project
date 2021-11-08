@@ -112,10 +112,11 @@ server <- function(input, output) {
         offers <- bind_rows(cost1, cost2)
         
         # cost of living plot via 1 bed apt cost
-        p1 <- ggplot(offers, aes(x = city, y = price)) +
+        p1 <- ggplot(offers, aes(x = city, y = price, label = price)) +
             geom_bar(stat = "identity",  fill = "lightsteelblue3") +
             labs(title = "Cost of 1 Bedroom Apartment in City",
                  x = "$") +
+            geom_text(aes(label = paste0("$",round(price,2)), y = price + 50), size = 3, fontface = "bold") +
             theme_bw() +
             theme(
                 axis.title.x = element_blank(),
@@ -128,9 +129,10 @@ server <- function(input, output) {
         # salary offer plot
         p2 <- offers %>% 
             mutate(month_sal = (salary/365) * 30.5) %>%
-            ggplot(., aes(x = city, y = month_sal)) +
+            ggplot(., aes(x = city, y = month_sal, label = month_sal)) +
             geom_bar(stat = "identity",  fill = "lightsteelblue3") +
             labs(title = "Monthly Salary Comparison") +
+            geom_text(aes(label = paste0("$",round(month_sal,2)), y = month_sal + 50), size = 3, fontface = "bold") +
             theme_bw() +
             theme(
                 axis.title.x = element_blank(),
@@ -146,9 +148,10 @@ server <- function(input, output) {
         # make salary per month -- salary divided by 356 and then by 30.5 days
         p3 <- offers %>%
             mutate(monthly_remainder = ((salary/365) * 30.5) - price) %>%
-            ggplot(., aes(x = city, y = monthly_remainder )) +
+            ggplot(., aes(x = city, y = monthly_remainder, label = monthly_remainder)) +
             geom_bar(stat = "identity",  fill = "steelblue4") +
-            labs(title = "Best Offer to Cost of Living Ratio") +
+            labs(title = "Surplus Montly Income") +
+            geom_text(aes(label = paste0("$",round(monthly_remainder,2)), y = monthly_remainder + 50), size = 3, fontface = "bold") +
             theme_bw() +
             theme(
                 axis.title.x = element_blank(),
@@ -160,7 +163,6 @@ server <- function(input, output) {
                 plot.title.position = "plot")
         
         grid.arrange(p1,p2,p3, ncol = 3)
-        
         
     }
     )
