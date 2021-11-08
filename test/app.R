@@ -107,16 +107,18 @@ server <- function(input, output) {
     
     # first plot of salary by occupations
     output$jobsalary <- renderPlot({
+        # create a maxwage that will be useful in the limits of x axis for ggplot later
         maxwage <-  wages %>% 
             filter(occupation == input$myjob) %>%
             select(annual) %>% 
             summarize(max2 = max(annual, na.rm = TRUE)) %>%  .$max2
             
-            
+        # create the ggplot    
         wages %>%
             filter(occupation == input$myjob) %>%
             ggplot(., aes(x = annual, y = reorder(city, - annual), label = annual)) +
             geom_col(stat = "identity", fill = "lightsteelblue3") +
+            # make the title change according to input
             labs(title = paste0("Annual Salary of ", input$myjob)) +
             theme_bw() +
             theme(axis.text.y = element_text(angle = 0, vjust = 0, hjust = 0),
@@ -128,7 +130,6 @@ server <- function(input, output) {
                   plot.title = element_text(face = "bold"),
                   plot.title.position = "plot") +
             scale_x_continuous(expand = c(0,0), labels = scales::comma, limits = c(0, maxwage + 10000))+
-#            coord_cartesian(xlim = c(0, max(wages$annual) + 50000))+
             geom_text(aes(label = paste0("$",annual), x = annual + 2500), size = 4, fontface = "bold")
     }
     )
@@ -199,7 +200,7 @@ server <- function(input, output) {
                 panel.grid.minor.x = element_blank(),
                 plot.title = element_text(face = "bold"),
                 plot.title.position = "plot")
-        
+        # combine all three and make this the output returned (ie do not assign it like others)
         grid.arrange(p1,p2,p3, ncol = 3)
         
     }
