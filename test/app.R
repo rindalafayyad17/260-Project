@@ -46,9 +46,9 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                      # add text explaining proces
                                      
                                     p(strong("Want to know some general information about salaries?")),
-                                    br(),
                                     p("Input your city of interest below to get the mean salary in that city."),
                                     p("Input your desired occupation to get the average salaries by city."),
+                                    br(),
                                      # select input here for mycity: city you are looking at
                                      selectInput(inputId = "mycity",
                                                  label = "What cities are you interested in?", choices = cities),
@@ -63,6 +63,12 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                     tabPanel("Offer Comparison",
                              sidebarLayout(
                                  sidebarPanel(
+                                     
+                                     # add text explaining process
+                                     p(strong("Do you have two competing offers from different cities that you want to compare?")),
+                                     p("Input your offers and cities below."),
+                                     p("The first plot will give you your cost of living (currently apartment cost). The second will give monthly salary. The third will give your remaining amount of mondey. Choose the city that maximizes plot 3!"),
+                                     br(),
                                      numericInput(inputId = "offer1",
                                                   label = "What is your first offer (annual salary)?", 50000, min = 1, max = 10000000),
                                      selectInput(inputId = "city1",
@@ -79,6 +85,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                 )
 )
 
+
 # Define server logic ----
 server <- function(input, output) {
     
@@ -88,7 +95,7 @@ server <- function(input, output) {
             filter(city == input$mycity) %>%
             filter(occupation == "All Occupations") %>%
             select(annual)
-        paste0( "The mean salary in ", as.character(input$mycity) ," is $",  round(as.numeric(mean_salary), 2))
+        paste0( "The mean salary of all jobs in ", as.character(input$mycity) ," is $",  round(as.numeric(mean_salary), 2), ".")
     })
     
     # first plot of salary by occupations
