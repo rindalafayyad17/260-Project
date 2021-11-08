@@ -24,8 +24,7 @@ wages <- wages %>%
 cost <- read_csv("col_citydata.csv")
 
 
-
-
+# set the values which can be selected from the city and occupations inputs
 cities <- sort(unique(wages$city))
 occupations <- sort(unique(wages$occupation))
 
@@ -40,26 +39,30 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                 
                 # create first tab 
                 tabsetPanel(
+                    # name the tab
                     tabPanel("General Salary Information",
                              sidebarLayout(
                                  sidebarPanel(
-                                     # add text explaining proces
-                                     
+                                    
+                                      # add text explaining process
                                     p(strong("Want to know some general information about salaries?")),
                                     p("Input your city of interest below to get the mean salary in that city."),
                                     p("Input your desired occupation to get the average salaries by city."),
                                     br(),
-                                     # select input here for mycity: city you are looking at
+                                    
+                                     # select input here for mycity and myjob to be part of this panel
                                      selectInput(inputId = "mycity",
                                                  label = "What city are you interested in?", choices = cities),
                                      selectInput(inputId = "myjob",
                                                  label = "What is your occupation?", choices = occupations)),
+                                 # for this panel this is the main panel output
                                  mainPanel(
                                      verbatimTextOutput(outputId = "citysalary"),
                                      plotOutput(outputId = "jobsalary", height = 700))
                              )
                     ),
                     
+                    # name of panel 2
                     tabPanel("Offer Comparison",
                              sidebarLayout(
                                  sidebarPanel(
@@ -69,6 +72,8 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                      p("Input your offers and cities below."),
                                      p("The first plot will give you your cost of living (currently apartment cost). The second will give monthly salary. The third will give your remaining amount of mondey. Choose the city that maximizes plot 3!"),
                                      br(),
+                                     
+                                     # these are the inputs for this panel 
                                      numericInput(inputId = "offer1",
                                                   label = "What is your first offer (annual salary)?", 50000, min = 1, max = 10000000),
                                      selectInput(inputId = "city1",
@@ -77,6 +82,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                   label = "What is your second offer (annual salary)?", 50000, min = 1, max = 10000000),
                                      selectInput(inputId = "city2",
                                                  label = "What city is your second offer in?", choices = cities, selected = "Boston")),
+                                 # this is the main panel output for this tab
                                  mainPanel(
                                      plotOutput(outputId = "comparison", height = 700)
                                  )
@@ -90,6 +96,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
 server <- function(input, output) {
     
     # Return mean salary
+    # use {} otherwise it will not work since you are defining something within this output
     output$citysalary <- renderText({
         mean_salary <- wages %>%
             filter(city == input$mycity) %>%
