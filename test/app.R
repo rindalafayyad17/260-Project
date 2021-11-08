@@ -92,7 +92,13 @@ server <- function(input, output) {
     })
     
     # first plot of salary by occupations
-    output$jobsalary <- renderPlot(
+    output$jobsalary <- renderPlot({
+        maxwage <-  wages %>% 
+            filter(occupation == input$myjob) %>%
+            select(annual) %>% 
+            summarize(max2 = max(annual, na.rm = TRUE)) %>%  .$max2
+            
+            
         wages %>%
             filter(occupation == input$myjob) %>%
             ggplot(., aes(x = annual, y = reorder(city, - annual), label = annual)) +
@@ -107,8 +113,10 @@ server <- function(input, output) {
                   panel.grid.minor.y = element_blank(),
                   plot.title = element_text(face = "bold"),
                   plot.title.position = "plot") +
-            scale_x_continuous(expand = c(0,0), labels = scales::comma)+
+            scale_x_continuous(expand = c(0,0), labels = scales::comma, limits = c(0, maxwage + 10000))+
+#            coord_cartesian(xlim = c(0, max(wages$annual) + 50000))+
             geom_text(aes(label = paste0("$",annual), x = annual + 2500), size = 2.8, fontface = "bold")
+    }
     )
     
     
@@ -187,5 +195,7 @@ server <- function(input, output) {
 
 # Run the app ----
 shinyApp(ui = ui, server = server)
+
+
 
 
