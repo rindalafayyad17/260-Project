@@ -51,12 +51,12 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                     br(),
                                      # select input here for mycity: city you are looking at
                                      selectInput(inputId = "mycity",
-                                                 label = "What cities are you interested in?", choices = cities),
+                                                 label = "What city are you interested in?", choices = cities),
                                      selectInput(inputId = "myjob",
                                                  label = "What is your occupation?", choices = occupations)),
                                  mainPanel(
                                      verbatimTextOutput(outputId = "citysalary"),
-                                     plotOutput(outputId = "jobsalary", height = 600))
+                                     plotOutput(outputId = "jobsalary", height = 700))
                              )
                     ),
                     
@@ -78,7 +78,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                      selectInput(inputId = "city2",
                                                  label = "What city is your second offer in?", choices = cities, selected = "Boston")),
                                  mainPanel(
-                                     plotOutput(outputId = "comparison", height = 500)
+                                     plotOutput(outputId = "comparison", height = 700)
                                  )
                              )
                     )
@@ -110,7 +110,7 @@ server <- function(input, output) {
             filter(occupation == input$myjob) %>%
             ggplot(., aes(x = annual, y = reorder(city, - annual), label = annual)) +
             geom_col(stat = "identity", fill = "lightsteelblue3") +
-            labs(title = "Annual Salary") +
+            labs(title = paste0("Annual Salary of ", input$myjob)) +
             theme_bw() +
             theme(axis.text.y = element_text(angle = 0, vjust = 0, hjust = 0),
                   axis.title.y = element_blank(),
@@ -122,7 +122,7 @@ server <- function(input, output) {
                   plot.title.position = "plot") +
             scale_x_continuous(expand = c(0,0), labels = scales::comma, limits = c(0, maxwage + 10000))+
 #            coord_cartesian(xlim = c(0, max(wages$annual) + 50000))+
-            geom_text(aes(label = paste0("$",annual), x = annual + 2500), size = 2.8, fontface = "bold")
+            geom_text(aes(label = paste0("$",annual), x = annual + 2500), size = 4, fontface = "bold")
     }
     )
     
