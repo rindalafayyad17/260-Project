@@ -40,29 +40,46 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                 # create first tab 
                 tabsetPanel(
                     # name the tab
-                    tabPanel("General Salary Information",
+                    tabPanel("Salary by City",
                              sidebarLayout(
                                  sidebarPanel(
-                                    
-                                      # add text explaining process
-                                    p(strong("Want to know some general information about salaries?")),
-                                    p("Input your city of interest below to get the mean salary in that city."),
-                                    p("Input your desired occupation to get the average salaries by city."),
-                                    br(),
-                                    
+                                     
+                                     # add text explaining process
+                                     p(strong("Want to know some general information about salaries?")),
+                                     p("Input your city of interest below to get the mean salary in that city."),
+                                     br(),
+                                     
                                      # select input here for mycity and myjob to be part of this panel
                                      selectInput(inputId = "mycity",
-                                                 label = "What city are you interested in?", choices = cities),
+                                                 label = "What city are you interested in?", choices = cities)),
+                                 
+                                 # for this panel this is the main panel output
+                                 mainPanel(
+                                     verbatimTextOutput(outputId = "citysalary"),
+                                 )
+                             )
+                    ),
+                    
+                    
+                    #name of panel 2
+                    tabPanel("Salary by Occupation",
+                             sidebarLayout(
+                                 sidebarPanel(
+                                     
+                                     # add text explaining process
+                                     p(strong("Want to know some general information about salaries?")),
+                                     p("Input your desired occupation to get the average salaries by city."),
+                                     br(),
+                                     
                                      selectInput(inputId = "myjob",
                                                  label = "What is your occupation?", choices = occupations)),
                                  # for this panel this is the main panel output
                                  mainPanel(
-                                     verbatimTextOutput(outputId = "citysalary"),
                                      plotOutput(outputId = "jobsalary", height = 700))
                              )
                     ),
                     
-                    # name of panel 2
+                    # name of panel 3
                     tabPanel("Offer Comparison",
                              sidebarLayout(
                                  sidebarPanel(
@@ -89,8 +106,8 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                              )
                     )
                 )
+                
 )
-
 
 # Define server logic ----
 server <- function(input, output) {
