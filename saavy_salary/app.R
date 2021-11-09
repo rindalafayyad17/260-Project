@@ -24,13 +24,9 @@ wages <- wages %>%
 cost <- read_csv("col_citydata.csv")
 
 
-
-
+# set the values which can be selected from the city and occupations inputs
 cities <- sort(unique(wages$city))
-occupations <- c("Accountants and Auditors", "Actuaries", "Aerospace Engineers", "Architecture and Engineering Occupations", "Bartenders",
-                 "Biochemists and Biophysicists", "Bioengineers and Biomedical Engineers", "Chemists", "Chief Executives", "Childcare Workers",
-                 "Chiropractors", "Data Scientists and Mathematical Science Occupations, All Other", "Financial and Investment Analysts, Financial Risk Specialists, and Financial Specialists, All Other",
-                 "Market Research Analysts and Marketing Specialists", "Mathematicians", "Statisticians", "Software Developers and Software Quality Assurance Analysts and Testers")
+occupations <- sort(unique(wages$occupation))
 
 
 ##############################
@@ -40,48 +36,90 @@ occupations <- c("Accountants and Auditors", "Actuaries", "Aerospace Engineers",
 # Define UI ----
 ui <- fluidPage(theme = shinytheme("sandstone"),
                 titlePanel("Checks & Cities"),
-                sidebarLayout(
-                    sidebarPanel(
-                        # select input here for mycity: city you are looking at
-                        selectInput(inputId = "mycity",
-                                    label = "What cities are you interested in?", choices = cities),
-                        selectInput(inputId = "myjob",
-                                    label = "What is your occupation?", choices = occupations),
-                        numericInput(inputId = "offer1",
-                                     label = "What is your first offer (annual salary)?", 50000, min = 1, max = 10000000),
-                        selectInput(inputId = "city1",
-                                    label = "What city is your first offer in?", choices = cities, selected = "Los Angeles"),
-                        numericInput(inputId = "offer2",
-                                     label = "What is your second offer (annual salary)?", 50000, min = 1, max = 10000000),
-                        selectInput(inputId = "city2",
-                                    label = "What city is your second offer in?", choices = cities, selected = "Boston")
+                
+                # create first tab 
+                tabsetPanel(
+                    # name the tab
+                    tabPanel("General Salary Information",
+                             sidebarLayout(
+                                 sidebarPanel(
+                                     
+                                     # add text explaining process
+                                     p(strong("Want to know some general information about salaries?")),
+                                     p("Input your city of interest below to get the mean salary in that city."),
+                                     p("Input your desired occupation to get the average salaries by city."),
+                                     br(),
+                                     
+                                     # select input here for mycity and myjob to be part of this panel
+                                     selectInput(inputId = "mycity",
+                                                 label = "What city are you interested in?", choices = cities),
+                                     selectInput(inputId = "myjob",
+                                                 label = "What is your occupation?", choices = occupations)),
+                                 # for this panel this is the main panel output
+                                 mainPanel(
+                                     verbatimTextOutput(outputId = "citysalary"),
+                                     plotOutput(outputId = "jobsalary", height = 700))
+                             )
                     ),
-                    mainPanel(
-                        verbatimTextOutput(outputId = "citysalary"),
-                        plotOutput(outputId = "jobsalary", height = 600),
-                        plotOutput(outputId = "comparison", height = 500)
-                    ))
+                    
+                    # name of panel 2
+                    tabPanel("Offer Comparison",
+                             sidebarLayout(
+                                 sidebarPanel(
+                                     
+                                     # add text explaining process
+                                     p(strong("Do you have two competing offers from different cities that you want to compare?")),
+                                     p("Input your offers and cities below."),
+                                     p("The first plot will give you your cost of living (currently apartment cost). The second will give monthly salary. The third will give your remaining amount of mondey. Choose the city that maximizes plot 3!"),
+                                     br(),
+                                     
+                                     # these are the inputs for this panel 
+                                     numericInput(inputId = "offer1",
+                                                  label = "What is your first offer (annual salary)?", 50000, min = 1, max = 10000000),
+                                     selectInput(inputId = "city1",
+                                                 label = "What city is your first offer in?", choices = cities, selected = "Los Angeles"),
+                                     numericInput(inputId = "offer2",
+                                                  label = "What is your second offer (annual salary)?", 50000, min = 1, max = 10000000),
+                                     selectInput(inputId = "city2",
+                                                 label = "What city is your second offer in?", choices = cities, selected = "Boston")),
+                                 # this is the main panel output for this tab
+                                 mainPanel(
+                                     plotOutput(outputId = "comparison", height = 700)
+                                 )
+                             )
+                    )
+                )
 )
+
 
 # Define server logic ----
 server <- function(input, output) {
     
     # Return mean salary
+    # use {} otherwise it will not work since you are defining something within this output
     output$citysalary <- renderText({
         mean_salary <- wages %>%
             filter(city == input$mycity) %>%
             filter(occupation == "All Occupations") %>%
             select(annual)
-        paste0( "The mean salary in ", as.character(input$mycity) ," is $",  round(as.numeric(mean_salary), 2))
+        paste0( "The mean salary of all jobs in ", as.character(input$mycity) ," is $",  round(as.numeric(mean_salary), 2), ".")
     })
     
     # first plot of salary by occupations
-    output$jobsalary <- renderPlot(
+    output$jobsalary <- renderPlot({
+        # create a maxwage that will be useful in the limits of x axis for ggplot later
+        maxwage <-  wages %>% 
+            filter(occupation == input$myjob) %>%
+            select(annual) %>% 
+            summarize(max2 = max(annual, na.rm = TRUE)) %>%  .$max2
+        
+        # create the ggplot    
         wages %>%
             filter(occupation == input$myjob) %>%
             ggplot(., aes(x = annual, y = reorder(city, - annual), label = annual)) +
             geom_col(stat = "identity", fill = "lightsteelblue3") +
-            labs(title = "Annual Salary") +
+            # make the title change according to input
+            labs(title = paste0("Annual Salary of ", input$myjob)) +
             theme_bw() +
             theme(axis.text.y = element_text(angle = 0, vjust = 0, hjust = 0),
                   axis.title.y = element_blank(),
@@ -91,8 +129,9 @@ server <- function(input, output) {
                   panel.grid.minor.y = element_blank(),
                   plot.title = element_text(face = "bold"),
                   plot.title.position = "plot") +
-            scale_x_continuous(expand = c(0,0), labels = scales::comma)+
-            geom_text(aes(label = paste0("$",annual), x = annual + 2500), size = 2.8, fontface = "bold")
+            scale_x_continuous(expand = c(0,0), labels = scales::comma, limits = c(0, maxwage + 10000))+
+            geom_text(aes(label = paste0("$",annual), x = annual + 2500), size = 4, fontface = "bold")
+    }
     )
     
     
@@ -161,7 +200,7 @@ server <- function(input, output) {
                 panel.grid.minor.x = element_blank(),
                 plot.title = element_text(face = "bold"),
                 plot.title.position = "plot")
-        
+        # combine all three and make this the output returned (ie do not assign it like others)
         grid.arrange(p1,p2,p3, ncol = 3)
         
     }
@@ -171,5 +210,7 @@ server <- function(input, output) {
 
 # Run the app ----
 shinyApp(ui = ui, server = server)
+
+
 
 
