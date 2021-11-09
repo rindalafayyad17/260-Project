@@ -46,7 +46,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                      
                                      # add text explaining process
                                      p(strong("Want to know some general information about salaries per city?")),
-                                     p("Input your city of interest below to get the mean salary in that city."),
+                                     p("Input your city of interest below to get the mean salary in that city for all occupations."),
                                      br(),
                                      
                                      # select input here for mycity and myjob to be part of this panel
@@ -68,7 +68,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                      
                                      # add text explaining process
                                      p(strong("Want to know some general information about salaries for a specific occupation?")),
-                                     p("Input your desired occupation to get the average salaries by city."),
+                                     p("Input your desired occupation to get the average salaries by city for that occupation."),
                                      br(),
                                      
                                      selectInput(inputId = "myjob",
