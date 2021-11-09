@@ -45,7 +45,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                  sidebarPanel(
                                      
                                      # add text explaining process
-                                     p(strong("Want to know some general information about salaries?")),
+                                     p(strong("Want to know some general information about salaries per city?")),
                                      p("Input your city of interest below to get the mean salary in that city."),
                                      br(),
                                      
@@ -67,7 +67,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                  sidebarPanel(
                                      
                                      # add text explaining process
-                                     p(strong("Want to know some general information about salaries?")),
+                                     p(strong("Want to know some general information about salaries for a specific occupation?")),
                                      p("Input your desired occupation to get the average salaries by city."),
                                      br(),
                                      
@@ -87,7 +87,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                      # add text explaining process
                                      p(strong("Do you have two competing offers from different cities that you want to compare?")),
                                      p("Input your offers and cities below."),
-                                     p("The first plot will give you your cost of living (currently apartment cost). The second will give monthly salary. The third will give your remaining amount of mondey. Choose the city that maximizes plot 3!"),
+                                     p("The first plot will give you your cost of living (currently apartment cost). The second will give monthly salary. The third will give your remaining amount of money. Choose the city that maximizes plot 3!"),
                                      br(),
                                      
                                      # these are the inputs for this panel 
