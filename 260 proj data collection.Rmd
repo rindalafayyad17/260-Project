@@ -3,7 +3,7 @@ title: "260 Project rough start"
 output: html_document
 ---
 
-Let's start this 260 project.
+Let's start this project.
 
 First we can upload the cost of living (COL) for Boston, MA. Would you look at that, it is pretty expensive to live in Boston. 
 
@@ -163,6 +163,7 @@ throttled_read_html <- slowly(~ read_html(.),
 # Clean data function
 cln_price <- function(citydata){
   citydata <- citydata %>% 
+    # replace various things and trim
     mutate(price = str_replace(price, "\\$", "")) %>%
     mutate(price = str_replace(price, "\\,", "")) %>% 
     mutate(price = str_trim(price)) %>% 
@@ -240,6 +241,7 @@ View(final)
 
 ```
 ```{r}
+# add notes of what is being done here
 final <- final %>% arrange(City, Occupation)
 
 mat <- matrix(ncol = 4, nrow = 0)
@@ -256,7 +258,8 @@ for (i in 1:nrow(final)){
 no_repeats <- no_repeats %>% filter(!(City %in% NA))
 View(no_repeats)
 
-write.csv(no_repeats,"C:/Users/Rindala/Desktop/Harvard/FALL 2021/BST 260/260-Project\\wages_norepeats.csv", row.names = FALSE)
+# save this file locally
+# write.csv(no_repeats,"C:/Users/Rindala/Desktop/Harvard/FALL 2021/BST 260/260-Project\\wages_norepeats.csv", row.names = FALSE)
 ```
 
 
@@ -266,7 +269,7 @@ temp <- read.csv(file = "col_citydata.csv", header = TRUE)
 View(temp)
 ```
 
-
+Previously, we selected specific elements from numbeo of interest. However, below we will get all elements from numbeo related to cost of living. This will be cleaned and stored locally. However, it will also exist as full_col_data.csv within the project folder. 
 
 ```{r}
 alldata <- data.frame()
@@ -298,19 +301,43 @@ throttled_read_html <- slowly(~ read_html(.),
    return(alldata)
    }
 
-# Clean data function
-cln_price <- function(citydata){
-  citydata <- citydata %>% 
-    mutate(price = str_replace(price, "\\$", "")) %>%
+
+
+# make  cleaning function which first removed any rows where the price column == edit
+cln_full <- function(alldata){
+  alldata = alldata %>% 
+    # remove all rows where price is edit, this is excess from scraping
+  filter(price != "Edit") %>% 
+    # trim and replcae
+  mutate(price = str_replace(price, "\\$", "")) %>%
     mutate(price = str_replace(price, "\\,", "")) %>% 
     mutate(price = str_trim(price)) %>% 
     mutate(price = as.numeric(price, digits = 7)) %>% 
     mutate(city = str_replace(city, "\\-", " "))
-  return(citydata)
+  return(alldata)
 }
 
-mydata <- make_df(cities_list)
+
+
+# this is df of all values from numbeo for 50 cities
+# final datasets
+############################################
+# Do not run below since will just bother the server for numbeo unneccessarily
+# files included in folder and within shiny app 
+#############################################
+
+
+#mydata <- make_df(cities_list)
+#full_col_data <- cln_full(mydata)
+
+# write this csv locally and upload it to the shiny server , as well as to this project file
+#write_csv(full_col_data, "C:/Users/herrerad/Documents/full_col_data.csv")
 ```
+
+
+Please describe what you are doing here: 
+We can potentailly put all analysis on separate files since this file is just titled "data collection"
+
 
 ```{r}
 library(rpart)
