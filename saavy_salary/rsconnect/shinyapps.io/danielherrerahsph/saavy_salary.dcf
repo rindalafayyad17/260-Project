@@ -1,0 +1,13 @@
+name: saavy_salary
+title: saavy_salary
+username:
+account: danielherrerahsph
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5063639
+bundleId: 5224714
+url: https://danielherrerahsph.shinyapps.io/saavy_salary/
+when: 1636329173.06647
+lastSyncTime: 1636329173.06647
+asMultiple: FALSE
+asStatic: FALSE
