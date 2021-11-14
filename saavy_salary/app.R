@@ -40,29 +40,45 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                 # create first tab 
                 tabsetPanel(
                     # name the tab
-                    tabPanel("General Salary Information",
+                    tabPanel("Salary by City",
                              sidebarLayout(
                                  sidebarPanel(
                                      
                                      # add text explaining process
-                                     p(strong("Want to know some general information about salaries?")),
-                                     p("Input your city of interest below to get the mean salary in that city."),
-                                     p("Input your desired occupation to get the average salaries by city."),
+                                     p(strong("Want to know some general information about salaries per city?")),
+                                     p("Input your city of interest below to get the mean salary in that city for all occupations."),
                                      br(),
                                      
                                      # select input here for mycity and myjob to be part of this panel
                                      selectInput(inputId = "mycity",
-                                                 label = "What city are you interested in?", choices = cities),
-                                     selectInput(inputId = "myjob",
-                                                 label = "What is your occupation?", choices = occupations)),
+                                                 label = "What city are you interested in?", choices = cities, selected = "Boston")),
+                                 
                                  # for this panel this is the main panel output
                                  mainPanel(
                                      verbatimTextOutput(outputId = "citysalary"),
+                                 )
+                             )
+                    ),
+                    
+                    #name of panel 2
+                    tabPanel("Salary by Occupation",
+                             sidebarLayout(
+                                 sidebarPanel(
+                                     
+                                     # add text explaining process
+                                     p(strong("Want to know some general information about salaries for a specific occupation?")),
+                                     p("Input your desired occupation to get the average salaries by city for that occupation."),
+                                     br(),
+                                     
+                                     selectInput(inputId = "myjob",
+                                                 label = "What is your occupation?", choices = occupations, selected = "Data Scientists and Mathematical Science Occupations, All Other")),
+                                 # for this panel this is the main panel output
+                                 mainPanel(
                                      plotOutput(outputId = "jobsalary", height = 700))
                              )
                     ),
                     
-                    # name of panel 2
+                    # name of panel 3
                     tabPanel("Offer Comparison",
                              sidebarLayout(
                                  sidebarPanel(
@@ -70,7 +86,8 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                      # add text explaining process
                                      p(strong("Do you have two competing offers from different cities that you want to compare?")),
                                      p("Input your offers and cities below."),
-                                     p("The first plot will give you your cost of living (currently apartment cost). The second will give monthly salary. The third will give your remaining amount of mondey. Choose the city that maximizes plot 3!"),
+                                     p("The first plot will give you your cost of living (currently apartment cost). The second will give monthly salary. The third will give your remaining amount of money."),
+                                     p("Choose the city that maximizes plot 3!"),
                                      br(),
                                      
                                      # these are the inputs for this panel 
@@ -89,8 +106,8 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                              )
                     )
                 )
+                
 )
-
 
 # Define server logic ----
 server <- function(input, output) {

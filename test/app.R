@@ -51,7 +51,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                      
                                      # select input here for mycity and myjob to be part of this panel
                                      selectInput(inputId = "mycity",
-                                                 label = "What city are you interested in?", choices = cities)),
+                                                 label = "What city are you interested in?", choices = cities, selected = "Boston")),
                                  
                                  # for this panel this is the main panel output
                                  mainPanel(
@@ -71,7 +71,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                      br(),
                                      
                                      selectInput(inputId = "myjob",
-                                                 label = "What is your occupation?", choices = occupations)),
+                                                 label = "What is your occupation?", choices = occupations, selected = "Data Scientists and Mathematical Science Occupations, All Other")),
                                  # for this panel this is the main panel output
                                  mainPanel(
                                      plotOutput(outputId = "jobsalary", height = 700))
@@ -129,7 +129,7 @@ server <- function(input, output) {
             filter(occupation == input$myjob) %>%
             select(annual) %>% 
             summarize(max2 = max(annual, na.rm = TRUE)) %>%  .$max2
-            
+        
         # create the ggplot    
         wages %>%
             filter(occupation == input$myjob) %>%
