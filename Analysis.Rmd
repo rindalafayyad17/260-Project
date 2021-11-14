@@ -1,0 +1,127 @@
+---
+title: "Analysis"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(rpart)
+library(tree)
+library(MASS)
+library(rpart.plot)
+library(tidyverse)
+library(dplyr)
+
+citydata <- read.csv("col_citydata.csv", header = TRUE)
+
+#creating a new data frame where we have only one row per city instead of multiple city rows
+rows_to_cols <- citydata %>% spread(metrics, price) 
+
+#renaming the columns to shorter names
+colnames(rows_to_cols) <- c("city", "apt_in_center", "apt_out_center", "salary", "basics", "internet", "meal_for_2", "inexpensive_meal")
+
+
+
+full <- read.csv(file = "full_col_data.csv", header = TRUE)
+
+#extracting only the three additional metrics I want to study from the full data frame
+subset <- full %>% filter(metrics == "McMeal at McDonalds (or Equivalent Combo Meal)" | metrics == "Gasoline (1 gallon)" | metrics == "International Primary School, Yearly for 1 Child")
+
+
+#transforming subset to data frame with one row per city
+subset2 <- subset %>% spread(metrics, price)
+colnames(subset2) <- c("city", "gas", "primary_school", "mcmeal")
+
+#combining the two new data frames I just created. 
+combined <- left_join(rows_to_cols, subset2, by = "city")
+
+View(combined)
+
+```
+
+We will do some exploratory analysis of the data to try to get a sense of the relationship between average monthly salary and each of the other predictor variables
+```{r}
+combined %>% 
+  gather(predictor, value, c(apt_in_center, apt_out_center, basics, internet, meal_for_2, inexpensive_meal, gas, primary_school, mcmeal)) %>% 
+  ggplot(aes(x = value, y = salary)) + 
+  geom_point() + 
+  geom_smooth(color = "pink") +
+  facet_wrap(~ predictor, scales = 'free_x', labeller = 
+               as_labeller(c("apt_in_center" = "Apartment in Center", 
+                             "apt_out_center" = "Apartment outside of Center", 
+                             "basics" = "Basics", 
+                             "inexpensive_meal" = "Inexpensive Meal",
+                             "internet" = "Internet",
+                             "meal_for_2" = "Meal for 2",
+                             "gas" = "Gasoline (1 gallon)",
+                             "primary_school" = "Primary School, Yearly for 1 Child",
+                             "mcmeal" = "McMeal at McDonalds"))) + 
+  xlab(NULL) + ylab("Average Monthyl Net Salary")
+```
+There seems to be a positive relationship between the average monthly net salary and the price of an apartment in the center, the price of an apartment outside of the center, the price of a meal for two in a mid-range restaurant, the price of 1 gallon of gasoline, the price of a McMeal at McDonalds, and the tuition for 1 child at an international primary school.
+
+However, looking at the plots, there does not seem to be a significant relationship between the average monthly net salary and the price of the basic utilities (such as electricity, heating, cooling, water, and garbage), the price of the Internet, and the price of an inexpensive meal. 
+
+```{r}
+combined %>% ggplot() + 
+  geom_histogram(aes(x = inexpensive_meal), binwidth = 1, color = "black", fill = "pink") + 
+  labs(x = "Price of Inexpensive meal") 
+```
+It seems that most cities have the same average price for an inexpensive meal (around $15) which explains why there is no significant relationship between the average monthly net salary and the price of an inexpensive meal.
+
+```{r}
+library(ggrepel)
+combined %>% ggplot(aes(x = mcmeal, y = salary, label = city)) +
+  geom_point(aes(color = "pink"))+
+  geom_text_repel()+
+  labs( x = "McMeal at McDonalds", y = "Average Monthly Net Salary")+
+  theme(legend.position = "none")
+
+```
+The cities with the most expensive McMeals at McDonalds are San Francisco, Seattle, Boston and Virginia Beach. The cities with the lowest McMeal prices are El Paso, Mesa and Memphis. We notice that these latter 3 cities are also the ones with the lowest average monthly net salary. Similarly, San Francisco has the highest McMeal Price and the highest average monthly net salary. 
+
+
+We will now try to predict the average monthly net salary using multiple linear regression, based on the price of an apartment in the center, the price of an apartment outside of the center, and the tuition for 1 child at an international primary school, because there seems to be a linear relationship between the salary and each of these covariates independently.
+
+We exclude the other variables in our analysis because there does not seem to be a *linear* relationship between the salary and each one of them, as seen in the plots above.
+
+```{r}
+
+#predicting average salary based the price of an apartment in the center, the price of an apartment outside of the center, and the tuition for 1 child at an international primary school
+salary_lm <- lm(salary ~ apt_in_center + apt_out_center + primary_school, data = combined)
+summary(salary_lm)
+
+```
+For a `$`100 increase in the price of an apartment in the center, the average monthly net salary in a city increases by `$`84.4 on average, keeping the other two covariates constant.
+
+For a `$`100 increase in the price of an apartment outside of the center, the average monthly net salary in a city increases by `$`82.5 on average, keeping the other two covariates constant. 
+
+For a `$`1000 increase in the yearly tuition for 1 child at an international primary school, the average monthly net salary in a city increases by `$`22.6 on average, keeping the other two covariates constant.
+
+
+We will now create a Decision Tree to predict the average monthyl net salary based on the price of an apartment in the center, the price of an apartment outside of the center, basic utilities, the price of an inexpensive meal, the price of the internet, the price of a meal for two, the price of 1 gallon of gas, the price of a McMeal, and the 1 year tuition for one child at an international primary school.
+```{r}
+#creating a Decision tree using rpart
+fit_rpart <- rpart(salary ~ apt_in_center + apt_out_center + basics + inexpensive_meal + internet + meal_for_2 + gas + mcmeal + primary_school, data = combined) 
+
+#looking at the error for different tree sizes 
+plotcp(fit_rpart)
+
+#the lowest error is achieved using a complexity parameter of 0.022
+p <- prune(fit_rpart, cp = 0.022)
+rpart.plot(p, digits = 4)
+```
+The __best__ Decision Tree tells us that the average monthly net salary is 
+
+* `$`6127 in the cities where an apartment outside of the center costs more than `$`1476.
+* `$`4109 in the cities where an apartment outside of the center costs less than `$`1476. Among those cities, the average monthly net salary is: 
+
+    - `$`3252 in the cities where an apartment in the center costs less than `$`1174 
+    - `$`4395 in the cities where an apartment in the center costs more than `$`1174. Among those cities, the average monthly net salary is:
+    
+        - `$`4735 in the cities where the internet (60 Mbps or More, Unlimited Data, Cable/ADSL) costs less than `$`63.42 
+        - `$`4098 in the cities where the internet (60 Mbps or More, Unlimited Data, Cable/ADSL) costs at least `$`63.42
+

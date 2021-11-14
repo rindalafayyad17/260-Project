@@ -197,7 +197,7 @@ dat <- read.csv(file = "wages.csv", header = TRUE)
 
 sub <- dat %>% select(AREA_TITLE, OCC_TITLE, H_MEAN, A_MEAN)
 
-sub <- sub %>% separate(AREA_TITLE, c("City", "State"), sep = ",")
+sub <- sub %>% separate(AREA_TITLE, c("City", "State"), sep = ",") #separating city and states into two different columns
 
 cities <- c("Los Angeles", "New York", "Chicago", "Houston", "Phoenix", "Philadelphia", "San Antonio", "San Diego", "Dallas", "San Jose", "Austin", "Jacksonville", "Fort Worth", "Columbus", "Charlotte", "San Francisco", "Indianapolis", "Seattle", "Denver", "Boston", "El Paso", "Washington", "Nashville", "Detroit", "Oklahoma City", "Portland", "Las Vegas", "Memphis", "Louisville", "Baltimore", "Milwaukee", "Albuquerque", "Tucson", "Fresno", "Mesa", "Sacramento", "Atlanta", "Kansas City", "Colorado Springs", "Omaha", "Raleigh", "Miami", "Long Beach", "Virginia Beach", "Oakland", "Minneapolis", "Tulsa", "Tampa", "Arlington", "New Orleans" )
 
@@ -240,11 +240,14 @@ View(final)
 
 
 ```
-```{r}
-# add notes of what is being done here
-final <- final %>% arrange(City, Occupation)
 
-mat <- matrix(ncol = 4, nrow = 0)
+```{r}
+
+#deleting repeated Occupations
+
+final <- final %>% arrange(City, Occupation) #arranging the dataset by city then by occupation
+
+mat <- matrix(ncol = 4, nrow = 0) #creating an empty matrix where I will store unique rows
 no_repeats <- as.data.frame(mat)
 colnames(no_repeats) <- c("City", "Occupation", "Hourly Wage", "Annual Wage")
 
@@ -254,8 +257,9 @@ for (i in 1:nrow(final)){
     
   }
 }
+#looping over the rows of the data frame and extracting the rows with unique city and occupation
 
-no_repeats <- no_repeats %>% filter(!(City %in% NA))
+no_repeats <- no_repeats %>% filter(!(City %in% NA)) #removing all NAs that were created.
 View(no_repeats)
 
 # save this file locally
@@ -335,32 +339,8 @@ cln_full <- function(alldata){
 ```
 
 
-Please describe what you are doing here: 
-We can potentailly put all analysis on separate files since this file is just titled "data collection"
 
 
-```{r}
-library(rpart)
-
-citydata <- read.csv("col_citydata.csv", header = TRUE)
-rows_to_cols <- citydata %>% spread(metrics, price)
-colnames(rows_to_cols) <- c("city", "apt_in_center", "apt_out_center", "salary", "basics", "internet", "meal_for_2", "inexpensive_meal")
-
-#predicting average salary based on the other metrics
-
-salary_lm <- lm(salary ~ apt_in_center + apt_out_center + basics + internet + inexpensive_meal, data = rows_to_cols)
-summary(salary_lm)
-
-fit_rpart <- rpart(salary ~ apt_in_center + apt_out_center + basics + internet + inexpensive_meal, data = rows_to_cols) 
-rpart.plot(fit_rpart, digits = 4)
-
-fit <- tree(salary ~ apt_in_center + apt_out_center + basics + internet + inexpensive_meal, data = rows_to_cols)
-plot(fit, type = "uniform")
-text(fit, cex = 1)
-
-#the rpart plot is prettier, but the second tree gives more info. 
-
-```
 
 
 
