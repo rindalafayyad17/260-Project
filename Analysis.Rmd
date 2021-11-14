@@ -125,3 +125,114 @@ The __best__ Decision Tree tells us that the average monthly net salary is
         - `$`4735 in the cities where the internet (60 Mbps or More, Unlimited Data, Cable/ADSL) costs less than `$`63.42 
         - `$`4098 in the cities where the internet (60 Mbps or More, Unlimited Data, Cable/ADSL) costs at least `$`63.42
 
+
+
+
+Our second focus is the apartment price in city center since it could best reflect the standard of living. When considering job offer, people would prefer to live near city center for convenience, and the price may deviated a lot in different cities. First, we will get a sense about how city center price differ from each city. 
+
+```{r}
+#Histogram for Apartment Price in City Center
+combined %>% ggplot() + 
+  geom_histogram(aes(x = apt_in_center), binwidth = 200, color = "black", fill = "light blue") + 
+  labs(x = "Apartment Price in City Center") 
+```
+Based on the histogram, we could see the distribution of apartment price in city center is kind of normal but skewed to right a little bit, which indicating the price for most cities is about 1200 to 2000. For some large cities, they could be outliers and have really high prices. 
+
+```{r}
+#Making scatter plot for apartment price in city center to explore the outliers
+combined %>% ggplot(aes(x = city, y = apt_in_center, label = city)) +
+  geom_point(aes(color = "blue"))+
+  geom_text_repel()+
+  labs( x = "City", y = "Apartment Price in City Center")+
+  ggtitle("Scatter Plot for Apartment Price in City Center")+
+  theme(axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        legend.position = "none")
+
+```
+
+This plot proves our thought that some large cities like New York, Boston, San Francisco have much higher price compare with most of other cities. 
+
+```{r}
+#Draw the relationship between apt in city center and predicted variables
+combined %>% 
+  gather(predictor, value, c(apt_out_center, salary, basics, internet, meal_for_2, inexpensive_meal, gas, primary_school, mcmeal)) %>% 
+  ggplot(aes(x = value, y = apt_in_center)) + 
+  geom_point() + 
+  geom_smooth(color = "light blue") +
+  facet_wrap(~ predictor, scales = 'free_x', labeller = 
+               as_labeller(c("apt_out_center" = "Apartment outside of Center", 
+                             "basics" = "Basics", 
+                             "salary" = "Salary", 
+                             "inexpensive_meal" = "Inexpensive Meal",
+                             "internet" = "Internet",
+                             "meal_for_2" = "Meal for 2",
+                             "gas" = "Gasoline (1 gallon)",
+                             "primary_school" = "Primary School, Yearly for 1 Child",
+                             "mcmeal" = "McMeal at McDonalds"))) + 
+  xlab(NULL) + ylab("Apartment Price in City Center")
+```
+Some variables XXXX seems have linear relationship with aparment price in City center, and some may have quadratic relationship. XXXXX
+
+
+```{r}
+apt_lm <- lm(apt_in_center ~  apt_out_center + basics^2 + salary  + inexpensive_meal + primary_school + meal_for_2, data = combined)
+summary(apt_lm)
+```
+
+
+```{r}
+library(tidyverse)
+library(splitstackshape)
+library(caret)
+library(MASS)
+library(pROC)
+library(rpart)
+library(randomForest)
+library(knitr)
+library(e1071)
+
+```
+
+```{r}
+
+#Seperate into training set and test set with 60% training and 40% test set
+set.seed(1)
+
+x <- stratified(combined, "apt_in_center", 0.6, keep.rownames = TRUE)
+train_set <- x %>% dplyr::select(-rn)
+train_index <- as.numeric(x$rn)
+test_set <- data[-train_index,]
+
+dim(train_set)
+dim(test_set)
+```
+
+```{r}
+train_set %>% summary()
+mean(train_set$apt_in_center)
+train_set$apt_in_center
+
+fit_naiveBayes = naiveBayes(apt_in_center ~ apt_out_center + basics + salary  +     inexpensive_meal + primary_school + meal_for_2, data = train_set)
+
+p_hat_nb <- predict(fit_naiveBayes, test_set, type = "raw")[,2]
+y_hat_naiveBayes = factor(ifelse(p_hat_nb > 0.5, "1", "0"))
+
+print(p_hat_nb)
+confusionMatrix(data = y_hat_naiveBayes, 
+                reference = as.factor(test_set$apt_in_center), 
+                positive = "1")
+
+
+```
+```{r}
+
+```
+
+```{r}
+set.seed(1)
+rf_fit<- randomForest(apt_in_center ~ apt_out_center + basics + salary  +     inexpensive_meal + primary_school + meal_for_2, data = train_set)
+
+p_hat_rf <- predict(rf_fit, newdata = test_set)
+```
+
