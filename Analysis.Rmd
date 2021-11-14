@@ -133,7 +133,7 @@ Our second focus is the apartment price in city center since it could best refle
 ```{r}
 #Histogram for Apartment Price in City Center
 combined %>% ggplot() + 
-  geom_histogram(aes(x = apt_in_center), binwidth = 200, color = "black", fill = "light blue") + 
+  geom_histogram(aes(x = apt_in_center), binwidth = 200, color = "blue", fill = "light blue") + 
   labs(x = "Apartment Price in City Center") 
 ```
 Based on the histogram, we could see the distribution of apartment price in city center is kind of normal but skewed to right a little bit, which indicating the price for most cities is about 1200 to 2000. For some large cities, they could be outliers and have really high prices. 
@@ -172,7 +172,8 @@ combined %>%
                              "mcmeal" = "McMeal at McDonalds"))) + 
   xlab(NULL) + ylab("Apartment Price in City Center")
 ```
-Some variables XXXX seems have linear relationship with aparment price in City center, and some may have quadratic relationship. XXXXX
+From the above plot, we could see most variables have positive linear relationship with apartment price in city center, and the predictors include apartment outside of city center, gasoline, inexpensive meal, McMeal at McDonalds, meal for 2, primary school, and salary. Basics (Electricity, Heating, Cooling, Water, Garbage for 915 sq ft Apartment) seems have quadratic relationship with apartment price in city center. Internet does not have clear relationship with apartment price 
+
 
 
 ```{r}
@@ -181,58 +182,56 @@ summary(apt_lm)
 ```
 
 
+
+
 ```{r}
-library(tidyverse)
-library(splitstackshape)
+#Using gradient boosting trees algorithm to test the relevance of each predicted variables
+#Code Source: https://www.datatechnotes.com/2020/08/regression-example-with-xgboost-in-r.html
+#load required library
+library(xgboost)
 library(caret)
-library(MASS)
-library(pROC)
-library(rpart)
-library(randomForest)
-library(knitr)
-library(e1071)
 
-```
+str(combined)
 
-```{r}
+#Seperate data set into train set and test set with 75% in the train set
+set.seed(12)
+indexes = createDataPartition(combined$apt_in_center, p = .75, list = F)
 
-#Seperate into training set and test set with 60% training and 40% test set
-set.seed(1)
+#Covert data into xgb matrix since xgboost need the data type as matrix data
+train = combined[indexes, ]
+test =combined[-indexes, ]
 
-x <- stratified(combined, "apt_in_center", 0.6, keep.rownames = TRUE)
-train_set <- x %>% dplyr::select(-rn)
-train_index <- as.numeric(x$rn)
-test_set <- data[-train_index,]
+train_x = data.matrix(train[, -2])
+train_y = train[,2]
 
-dim(train_set)
-dim(test_set)
-```
+test_x = data.matrix(test[, -2])
+test_y = test[, 2]
 
-```{r}
-train_set %>% summary()
-mean(train_set$apt_in_center)
-train_set$apt_in_center
+xgb_train = xgb.DMatrix(data = train_x, label = train_y)
+xgb_test = xgb.DMatrix(data = test_x, label = test_y)
 
-fit_naiveBayes = naiveBayes(apt_in_center ~ apt_out_center + basics + salary  +     inexpensive_meal + primary_school + meal_for_2, data = train_set)
+#Fit the model using xgboost package
+#max.depth indicates the depth of the tree and nrounds indicates how many rounds to train 
+xgbc = xgboost(data = xgb_train, max.depth = 2, nrounds = 50)
+print(xgbc)
 
-p_hat_nb <- predict(fit_naiveBayes, test_set, type = "raw")[,2]
-y_hat_naiveBayes = factor(ifelse(p_hat_nb > 0.5, "1", "0"))
+#Predict apt_in_center with trained model
+pred_y = predict(xgbc, xgb_test)
 
-print(p_hat_nb)
-confusionMatrix(data = y_hat_naiveBayes, 
-                reference = as.factor(test_set$apt_in_center), 
-                positive = "1")
+#Calculate MSE, MAE, and RMSE of the model to evaluate
+mse = mean((test_y - pred_y)^2)
+mae = caret::MAE(test_y, pred_y)
+rmse = caret::RMSE(test_y, pred_y)
+
 
 
 ```
 ```{r}
-
+#Print out the relevance of each predictors from the gradient boosting trees model
+xgb.importance(colnames(train_x), model = xgbc)
 ```
+Here, gain means how much each predictors contributed to the model. Since 
 
-```{r}
-set.seed(1)
-rf_fit<- randomForest(apt_in_center ~ apt_out_center + basics + salary  +     inexpensive_meal + primary_school + meal_for_2, data = train_set)
 
-p_hat_rf <- predict(rf_fit, newdata = test_set)
-```
+
 
