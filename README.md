@@ -31,13 +31,13 @@ The 'General Salary by Occupation' tab plots the mean salary for the occupation 
 The 'Offer Comparison' tab is useful for comparing salary offers across two cities. Plots included are:
 1) the average cost of living in the city of interest which is defined as the sum of: 
 
-  a) 16 inexpensive meals at restaurants (because the average American eats out 4 times a week)
+    a) 16 inexpensive meals at restaurants (because the average American eats out 4 times a week)
   
-  b) apartment cost in city center for one bedroom
+    b) apartment cost in city center for one bedroom
   
-  c) basic utilities such as electricity, cooling, water, garbage for 915 sq ft apartment
+    c) basic utilities such as electricity, cooling, water, garbage for 915 sq ft apartment
   
-  d) internet (speed 60 mbps or more)
+    d) internet (speed 60 mbps or more)
 
 2) the average monthly salary for your inputted offer
 3) the discretionary income (2-1) after accounting for cost of living
