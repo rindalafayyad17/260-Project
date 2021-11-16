@@ -5,7 +5,7 @@ A salary comparison dashboard and analysis into cost of living and salary data.
 
 
 ## Data Collection
-File: 260 proj data collection
+File: 260 proj data collection.rmd
 
 The cost of living data for this dashboard was collected using webscraping with the 'rvest' and 'httr' packages within R. This data was then cleaned utilizing the tidyverse, and subsequent dplyr funcitons, and will be utilized within the shiny app and other analysis. The current markdown file will not attempt to create this dataset again since it requires assessing the server to pull the data for the cost of living. We do this to be polite, but leave the command in the file commented out. There are files which include "col" in the title for this data. However, either 'full_col_data.csv' and 'col_citydata.csv' are the files generally used in the analysis and shiny app sections.
 
