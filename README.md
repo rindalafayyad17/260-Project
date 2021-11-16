@@ -15,6 +15,7 @@ Both of these datasets are found within the folder for the shiny app, so they wi
 
 ## Shiny App
 File: savvy salary folder
+
 The dashboard created uses various tabs to guide users towards making a smarter decision with salary information. The following tabs were created:
 1) General Salary by City
 2) General Salary by Occupation
