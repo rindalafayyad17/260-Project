@@ -270,7 +270,7 @@ Now we want to remove the "All Other" from the Occupations
 cleaned_occupations <- no_repeats %>% 
   mutate_at("Occupation", str_replace, ", All Other", "")
 
-# save this file locally
+#save this file locally
 #write.csv(cleaned_occupations,"C:/Users/Rindala/Desktop/Harvard/FALL 2021/BST 260/260-Project/saavy_salary\\cleaned_occupations.csv", row.names = FALSE)
 
 ```

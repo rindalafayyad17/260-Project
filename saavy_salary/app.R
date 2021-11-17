@@ -9,6 +9,7 @@ library(gridExtra)
 
 # wages/salary dataset
 wages <- read_csv("cleaned_occupations.csv")
+
 wages <- as_tibble(wages) %>%
     rename(city = City, occupation = Occupation, hourly = 'Hourly Wage', annual = 'Annual Wage')
 
