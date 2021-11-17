@@ -8,7 +8,7 @@ library(gridExtra)
 #############################
 
 # wages/salary dataset
-wages <- read_csv("wages_norepeats.csv")
+wages <- read_csv("cleaned_occupations.csv")
 wages <- as_tibble(wages) %>%
     rename(city = City, occupation = Occupation, hourly = 'Hourly Wage', annual = 'Annual Wage')
 
@@ -80,7 +80,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                      br(),
                                      
                                      selectInput(inputId = "myjob",
-                                                 label = "What is your occupation?", choices = occupations, selected = "Data Scientists and Mathematical Science Occupations, All Other")),
+                                                 label = "What occupation category best represents yours?", choices = occupations, selected = "Data Scientists and Mathematical Science Occupations, All Other")),
                                  # for this panel this is the main panel output
                                  mainPanel(
                                      plotOutput(outputId = "jobsalary", height = 700))
@@ -97,7 +97,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                      p("Input your offers and cities below."),
                                      p("The first plot will give you your cost of living. The second will give monthly salary. The third will give your remaining amount of money."),
                                      p(em("Cost of living was determined by adding city averages for basic utilities, internet, one bedroom apartment in city, and 16 meals out per month.")),
-                                     p(strong("Choose the city that maximizes Monthly Discetionary Income (plot 3)!")),
+                                     p(strong("Choose the city and offer that maximizes Remaining Monthly Income (plot 3)!")),
                                      br(),
                                      
                                      # these are the inputs for this panel 
@@ -197,7 +197,7 @@ server <- function(input, output) {
             mutate(month_sal = (salary/365) * 30.5) %>%
             ggplot(., aes(x = city, y = month_sal, label = month_sal)) +
             geom_bar(stat = "identity",  fill = "lightsteelblue3") +
-            labs(title = "Monthly Salary Comparison") +
+            labs(title = "Monthly Salary") +
             geom_text(aes(label = paste0("$",prettyNum(round(month_sal,2),big.mark = ",")), y = month_sal + 50), size = 4, fontface = "bold") +
             theme_bw() +
             theme(
@@ -216,7 +216,7 @@ server <- function(input, output) {
             mutate(monthly_remainder = ((salary/365) * 30.5) - expenses) %>%
             ggplot(., aes(x = city, y = monthly_remainder, label = monthly_remainder)) +
             geom_bar(stat = "identity",  fill = "steelblue4") +
-            labs(title = "Discretionary Monthly Income") +
+            labs(title = "Remaining Monthly Income") +
             geom_text(aes(label = paste0("$",prettyNum(round(monthly_remainder,2), big.mark = ",")), y = monthly_remainder + 50), size = 4, fontface = "bold") +
             theme_bw() +
             theme(
