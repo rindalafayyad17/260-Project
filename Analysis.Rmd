@@ -59,7 +59,7 @@ combined %>%
                              "gas" = "Gasoline (1 gallon)",
                              "primary_school" = "Primary School, Yearly for 1 Child",
                              "mcmeal" = "McMeal at McDonalds"))) + 
-  xlab(NULL) + ylab("Average Monthyl Net Salary")
+  xlab(NULL) + ylab("Average MonthLY Net Salary")
 ```
 There seems to be a positive relationship between the average monthly net salary and the price of an apartment in the center, the price of an apartment outside of the center, the price of a meal for two in a mid-range restaurant, the price of 1 gallon of gasoline, the price of a McMeal at McDonalds, and the tuition for 1 child at an international primary school.
 
