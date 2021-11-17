@@ -58,10 +58,10 @@ occupations <- sort(unique(wages$occupation))
 #select the mean annual salary by each city
 mean_salary <- wages %>%
             filter(occupation == "All Occupations") %>%
-            select(annual,city)
+            dplyr:::select(annual,city)
 #select the annual expenses by each city
 annual_expenses=cost %>%
-            select(city, AnnualExpenses)
+            dplyr:::select(city, AnnualExpenses)
 
 #merge the two dataframe
 salary_expenses_byCity <- merge(mean_salary,annual_expenses,by="city")
