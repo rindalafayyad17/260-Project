@@ -8,8 +8,7 @@ library(gridExtra)
 #############################
 
 # wages/salary dataset
-wages <- read_csv("cleaned_occupations.csv")
-
+wages <- read_csv("wages_norepeats.csv")
 wages <- as_tibble(wages) %>%
     rename(city = City, occupation = Occupation, hourly = 'Hourly Wage', annual = 'Annual Wage')
 
@@ -96,9 +95,9 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                      # add text explaining process
                                      p(strong("Do you have two competing offers from different cities that you want to compare?")),
                                      p("Input your offers and cities below."),
-                                     p("The first plot will give you your cost of living. The second will give you your monthly salary. The third will give you your remaining amount of money."),
+                                     p("The first plot will give you your cost of living. The second will give monthly salary. The third will give your remaining amount of money."),
                                      p(em("Cost of living was determined by adding city averages for basic utilities, internet, one bedroom apartment in city, and 16 meals out per month.")),
-                                     p(strong("Choose the city/offer that maximizes Monthly Remaining Income (plot 3)!")),
+                                     p(strong("Choose the city that maximizes Monthly Discetionary Income (plot 3)!")),
                                      br(),
                                      
                                      # these are the inputs for this panel 
@@ -198,7 +197,7 @@ server <- function(input, output) {
             mutate(month_sal = (salary/365) * 30.5) %>%
             ggplot(., aes(x = city, y = month_sal, label = month_sal)) +
             geom_bar(stat = "identity",  fill = "lightsteelblue3") +
-            labs(title = "Monthly Salary") +
+            labs(title = "Monthly Salary Comparison") +
             geom_text(aes(label = paste0("$",prettyNum(round(month_sal,2),big.mark = ",")), y = month_sal + 50), size = 4, fontface = "bold") +
             theme_bw() +
             theme(
@@ -217,7 +216,7 @@ server <- function(input, output) {
             mutate(monthly_remainder = ((salary/365) * 30.5) - expenses) %>%
             ggplot(., aes(x = city, y = monthly_remainder, label = monthly_remainder)) +
             geom_bar(stat = "identity",  fill = "steelblue4") +
-            labs(title = "Remaining Monthly Income") +
+            labs(title = "Discretionary Monthly Income") +
             geom_text(aes(label = paste0("$",prettyNum(round(monthly_remainder,2), big.mark = ",")), y = monthly_remainder + 50), size = 4, fontface = "bold") +
             theme_bw() +
             theme(
@@ -238,6 +237,3 @@ server <- function(input, output) {
 
 # Run the app ----
 shinyApp(ui = ui, server = server)
-
-
-
