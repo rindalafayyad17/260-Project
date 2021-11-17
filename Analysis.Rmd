@@ -177,12 +177,24 @@ From the above plot, we could see most variables have positive linear relationsh
 
 
 ```{r}
-apt_lm <- lm(apt_in_center ~  apt_out_center + basics^2 + salary  + inexpensive_meal + primary_school + meal_for_2, data = combined)
+#Regression for apartment price in city center with predictors of apartment price outside city center, basics (in quadratic term), salary, gasoline, inexpensive_meal, primary school, meal for 2
+apt_lm <- lm(apt_in_center ~  apt_out_center + basics^2 + salary  + gas+ inexpensive_meal + primary_school + meal_for_2, data = combined)
 summary(apt_lm)
 ```
 
+From the regression, only the coefficient for aparment price out of city center and meanl for 2 is statistically significant using 95% confidence level. So we will do a reduced model with only these two predictors.
 
+```{r}
+#A reduced regression model contains only significant predictors apt_out_center and meal_for_2
+apt_lm_r <- lm(apt_in_center ~  apt_out_center + meal_for_2, data = combined)
+summary(apt_lm_r)
+```
 
+From above regression, the coefficient for apartment price out of city center and meal for 2 are all positive indicating there is positive relationship between apartment price in city center and the two predictors. 
+
+Holding all other variables constant, for one dollar increase in the apartment price outside city center, the estimated price for apartment price in city center will increase 1.05686 dollar on average.
+
+Holding all other variables constant, for one dollar increase in the mean for two, the estimated price for apartment price in city center will increase 9.53476 dollar on average.
 
 ```{r}
 #Using gradient boosting trees algorithm to test the relevance of each predicted variables
@@ -230,7 +242,7 @@ rmse = caret::RMSE(test_y, pred_y)
 #Print out the relevance of each predictors from the gradient boosting trees model
 xgb.importance(colnames(train_x), model = xgbc)
 ```
-Here, gain means how much each predictors contributed to the model. Since 
+Here, we use the gradient boosting trees algorithm to train the model. From this model we could get the relative importance in prediction of the apartment price in the city center. The gain means how much each predictors contributed to the model. From this machine learning model, it's apt_out_center as the most importance one, the salary as the second importance one. 
 
 
 
