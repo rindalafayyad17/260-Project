@@ -1,0 +1,247 @@
+---
+title: "Visualization"
+author: "Mengyao"
+date: "11/16/2021"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+
+library(MASS)
+library(tidyverse)
+library(dplyr)
+library(htmlwidgets)
+library(ggthemes)
+library(ggrepel)
+library(gridExtra)
+library(webshot)
+# wages/salary dataset
+wages <- read_csv("wages_norepeats.csv")
+wages <- as_tibble(wages) %>%
+    rename(city = City, occupation = Occupation, hourly = 'Hourly Wage', annual = 'Annual Wage')
+
+# data cleaning
+# need to remove wage values labeled as > 208,000
+wages <- wages %>%
+    mutate(annual  = recode(annual,
+                            ">208000" = 'NA'
+    )) %>%
+    mutate(annual = str_remove(annual, ",")) %>% 
+    mutate(annual = as.numeric(annual))
+
+# cost of living data
+cost <- read_csv("full_col_data.csv")
+
+# will need to make the data wide
+# create new variable which will be used to calculate monthly expenses and discretionary income
+cost <- cost %>% 
+    pivot_wider(names_from = metrics, values_from = price) %>% 
+    # average meals per week out is 4 (16 monthly)! 
+    mutate(expenses = 16 * as.numeric(`Meal, Inexpensive Restaurant`) + 
+             as.numeric(`Apartment (1 bedroom) in City Centre`) + 
+               as.numeric(`Basic (Electricity, Heating, Cooling, Water, Garbage) for 915 sq ft Apartment`) + 
+               as.numeric(`Internet (60 Mbps or More, Unlimited Data, Cable/ADSL)`))
+cost$AnnualExpenses=12*cost$expenses
+
+
+# set the values which can be selected from the city and occupations inputs
+cities <- sort(unique(wages$city))
+occupations <- sort(unique(wages$occupation))
+
+#select the mean annual salary by each city
+mean_salary <- wages %>%
+            filter(occupation == "All Occupations") %>%
+            select(annual,city)
+#select the annual expenses by each city
+annual_expenses=cost %>%
+            select(city, AnnualExpenses)
+
+#merge the two dataframe
+salary_expenses_byCity <- merge(mean_salary,annual_expenses,by="city")
+names(salary_expenses_byCity)[2] <- "AnnualSalary"
+```
+```{r}
+
+salary_expenses_byCity %>% ggplot(aes(x = AnnualExpenses, y = AnnualSalary , label = city)) + 
+  geom_point(aes(x = AnnualExpenses, y = AnnualSalary, label = city), size = 2) +
+  geom_smooth(method = lm)+
+  geom_text_repel() +
+  xlab("Annual average living expenses in each city") + 
+  ylab("Annual average salary in each city") +
+  ggtitle("Average Salary VS. Average Living Expenses in Each City") +
+  theme_economist()
+
+```
+
+## Contrast Average Salary VS. Average Living Expenses in Each City
+
+According to the scatter plot, we can see that there is a clear trade-off between average salary and average living expenses in each city in the USA. Generally speaking, in the cities where people have higher annual average salary, the annual average living expenses will also be higher. 
+
+Comparing Boston and New York in this plot, we can see that Boston has a higher annual average salary while lower annual average living expenses. In this sense, Boston is more comfortable to live in than New York. Cities with highest annual average salaries are San Jose, San Francisco, and Oakland. All of the three are in the Bay area. Comparing the three cities, San Jose is the most comfortable to live in. 
+
+
+
+
+
+
+
+
+## Word Cloud
+
+
+```{r}
+#install.packages("wordcloud")
+library(wordcloud)
+#install.packages("RColorBrewer")
+library(RColorBrewer)
+#install.packages("wordcloud2")
+library(wordcloud2)
+library(tm)
+
+highWages_all<- wages %>%
+            drop_na() %>%
+            filter(as.numeric(annual)>quantile(as.numeric(annual), prob=c(.95))) 
+
+
+text <- highWages_all$occupation
+
+
+docs_all <- Corpus(VectorSource(text))
+docs_all <- docs_all %>%
+  tm_map(removeNumbers) %>%
+  tm_map(removePunctuation) %>%
+  tm_map(stripWhitespace)
+docs_all <- tm_map(docs_all, content_transformer(tolower))
+docs_all <- tm_map(docs_all, removeWords, stopwords("english"))
+
+dtm_all <- TermDocumentMatrix(docs_all) 
+matrix_all <- as.matrix(dtm_all) 
+words_all <- sort(rowSums(matrix_all),decreasing=TRUE) 
+df_all <- data.frame(word = names(words_all),freq=words_all)
+df_all <- df_all %>%
+  filter(word != "managers" & word != "general" &  word != "except" & word != "occupations" & word != "firstline" & word != "personal")
+
+set.seed(12) # for reproducibility 
+
+my_graph=wordcloud2(data=df_all, size=0.5, color='random-dark')
+saveWidget(my_graph, "tmp.html", selfcontained = F)
+webshot("tmp.html", "wordcloud/total.png", delay = 5, vwidth = 500, vheight = 500)
+
+
+```
+On general, the occupations with salaries higher than the 95th percentile in these cities are more related with physicians, computer science and financial services.
+
+
+
+
+```{r}
+
+word_cloud_HighWages <- function(a) { # input a is a string of city name
+highWages<- wages %>%
+            drop_na() %>%
+            filter(city == a & as.numeric(annual)>quantile(as.numeric(annual), prob=c(.95))) 
+
+
+text <- highWages$occupation
+
+docs <- Corpus(VectorSource(text))
+
+docs <- docs %>%
+  tm_map(removePunctuation)
+docs <- tm_map(docs, content_transformer(tolower))
+docs <- tm_map(docs, removeWords, stopwords("english"))
+dtm <- TermDocumentMatrix(docs) 
+matrix <- as.matrix(dtm) 
+words <- sort(rowSums(matrix),decreasing=TRUE) 
+df <- data.frame(word = names(words),freq=words)
+df <- df %>%
+  filter(word != "managers" & word != "general" &  word != "except" & word != "occupations" & word != "firstline")
+
+set.seed(12) # for reproducibility 
+
+wordcloud2(data=df, size=0.5, color='random-dark')
+}
+
+```
+
+
+
+
+```{r}
+my_graph = word_cloud_HighWages("Boston")
+saveWidget(my_graph, "tmp.html", selfcontained = F)
+webshot("tmp.html", "wordcloud/boston.png", delay = 5, vwidth = 500, vheight = 500)
+```
+
+
+```{r}
+my_graph=word_cloud_HighWages("San Jose")
+saveWidget(my_graph, "tmp.html", selfcontained = F)
+webshot("tmp.html", "wordcloud/San Jose.png", delay = 5, vwidth = 500, vheight = 500)
+```
+
+```{r}
+my_graph=word_cloud_HighWages("San Francisco")
+saveWidget(my_graph, "tmp.html", selfcontained = F)
+webshot("tmp.html", "wordcloud/San Francisco.png", delay = 5, vwidth = 500, vheight = 500)
+
+```
+```{r}
+my_graph=word_cloud_HighWages("San Diego")
+
+saveWidget(my_graph, "tmp.html", selfcontained = F)
+webshot("tmp.html", "wordcloud/San Diego.png", delay = 5, vwidth = 500, vheight = 500)
+
+```
+
+
+```{r}
+my_graph=word_cloud_HighWages("New York")
+saveWidget(my_graph, "tmp.html", selfcontained = F)
+webshot("tmp.html", "wordcloud/New York.png", delay = 5, vwidth = 500, vheight = 500)
+
+```
+
+```{r}
+my_graph=word_cloud_HighWages("Los Angeles")
+saveWidget(my_graph, "tmp.html", selfcontained = F)
+webshot("tmp.html", "wordcloud/Lod Angeles.png", delay = 5, vwidth = 500, vheight = 500)
+
+```
+
+```{r}
+my_graph=word_cloud_HighWages("Chicago")
+saveWidget(my_graph, "tmp.html", selfcontained = F)
+webshot("tmp.html", "wordcloud/Chicago.png", delay = 5, vwidth = 500, vheight = 500)
+```
+```{r}
+
+my_graph=word_cloud_HighWages("Kansas City")
+saveWidget(my_graph, "tmp.html", selfcontained = F)
+webshot("tmp.html", "wordcloud/Kansas City.png", delay = 5, vwidth = 500, vheight = 500)
+```
+```{r}
+my_graph=word_cloud_HighWages("Raleigh")
+
+saveWidget(my_graph, "tmp.html", selfcontained = F)
+webshot("tmp.html", "wordcloud/Raleigh.png", delay = 5, vwidth = 500, vheight = 500)
+```
+
+
+
+
+
+
+
+According to these word cloud of high-paid jobs in different cities, it is obvious that cities in different areas has different features.
+In the north east of USA, New York has more high-paid jobs related to financial services while in Boston high salaries are more correlated with medicine. San Diego has a similar distribution of high-paid jobs with Boston, both of which have a great emphasis on the health-care industry.
+In the Bay area, we can see that there are more high-paid jobs in the computer science industry.
+
+
