@@ -2,7 +2,9 @@
 title: "Visualization"
 author: "Mengyao"
 date: "11/16/2021"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -130,7 +132,7 @@ set.seed(12) # for reproducibility
 
 my_graph=wordcloud2(data=df_all, size=0.5, color='random-dark')
 saveWidget(my_graph, "tmp.html", selfcontained = F)
-webshot("tmp.html", "total.png", delay = 5, vwidth = 5000, vheight = 5000)
+webshot("tmp.html", "wordcloud/total.png", delay = 5, vwidth = 500, vheight = 500)
 
 
 ```
@@ -166,6 +168,7 @@ set.seed(12) # for reproducibility
 
 wordcloud2(data=df, size=0.5, color='random-dark')
 }
+
 ```
 
 
@@ -174,27 +177,27 @@ wordcloud2(data=df, size=0.5, color='random-dark')
 ```{r}
 my_graph = word_cloud_HighWages("Boston")
 saveWidget(my_graph, "tmp.html", selfcontained = F)
-webshot("tmp.html", "boston.png", delay = 5, vwidth = 500, vheight = 500)
+webshot("tmp.html", "wordcloud/boston.png", delay = 5, vwidth = 500, vheight = 500)
 ```
 
 
 ```{r}
 my_graph=word_cloud_HighWages("San Jose")
 saveWidget(my_graph, "tmp.html", selfcontained = F)
-webshot("tmp.html", "San Jose.png", delay = 5, vwidth = 500, vheight = 500)
+webshot("tmp.html", "wordcloud/San Jose.png", delay = 5, vwidth = 500, vheight = 500)
 ```
 
 ```{r}
 my_graph=word_cloud_HighWages("San Francisco")
 saveWidget(my_graph, "tmp.html", selfcontained = F)
-webshot("tmp.html", "San Francisco.png", delay = 5, vwidth = 500, vheight = 500)
+webshot("tmp.html", "wordcloud/San Francisco.png", delay = 5, vwidth = 500, vheight = 500)
 
 ```
 ```{r}
 my_graph=word_cloud_HighWages("San Diego")
 
 saveWidget(my_graph, "tmp.html", selfcontained = F)
-webshot("tmp.html", "San Diego.png", delay = 5, vwidth = 500, vheight = 500)
+webshot("tmp.html", "wordcloud/San Diego.png", delay = 5, vwidth = 500, vheight = 500)
 
 ```
 
@@ -202,33 +205,33 @@ webshot("tmp.html", "San Diego.png", delay = 5, vwidth = 500, vheight = 500)
 ```{r}
 my_graph=word_cloud_HighWages("New York")
 saveWidget(my_graph, "tmp.html", selfcontained = F)
-webshot("tmp.html", "New York.png", delay = 5, vwidth = 500, vheight = 500)
+webshot("tmp.html", "wordcloud/New York.png", delay = 5, vwidth = 500, vheight = 500)
 
 ```
 
 ```{r}
 my_graph=word_cloud_HighWages("Los Angeles")
 saveWidget(my_graph, "tmp.html", selfcontained = F)
-webshot("tmp.html", "Lod Angeles.png", delay = 5, vwidth = 500, vheight = 500)
+webshot("tmp.html", "wordcloud/Lod Angeles.png", delay = 5, vwidth = 500, vheight = 500)
 
 ```
 
 ```{r}
 my_graph=word_cloud_HighWages("Chicago")
 saveWidget(my_graph, "tmp.html", selfcontained = F)
-webshot("tmp.html", "Chicago.png", delay = 5, vwidth = 500, vheight = 500)
+webshot("tmp.html", "wordcloud/Chicago.png", delay = 5, vwidth = 500, vheight = 500)
 ```
 ```{r}
 
 my_graph=word_cloud_HighWages("Kansas City")
 saveWidget(my_graph, "tmp.html", selfcontained = F)
-webshot("tmp.html", "Kansas City.png", delay = 5, vwidth = 500, vheight = 500)
+webshot("tmp.html", "wordcloud/Kansas City.png", delay = 5, vwidth = 500, vheight = 500)
 ```
 ```{r}
 my_graph=word_cloud_HighWages("Raleigh")
 
 saveWidget(my_graph, "tmp.html", selfcontained = F)
-webshot("tmp.html", "Raleigh.png", delay = 5, vwidth = 500, vheight = 500)
+webshot("tmp.html", "wordcloud/Raleigh.png", delay = 5, vwidth = 500, vheight = 500)
 ```
 
 
