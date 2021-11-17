@@ -260,12 +260,20 @@ for (i in 1:nrow(final)){
 #looping over the rows of the data frame and extracting the rows with unique city and occupation
 
 no_repeats <- no_repeats %>% filter(!(City %in% NA)) #removing all NAs that were created.
-View(no_repeats)
 
 # save this file locally
-# write.csv(no_repeats,"C:/Users/Rindala/Desktop/Harvard/FALL 2021/BST 260/260-Project\\wages_norepeats.csv", row.names = FALSE)
+#write.csv(no_repeats,"C:/Users/Rindala/Desktop/Harvard/FALL 2021/BST 260/260-Project\\wages_norepeats.csv", row.names = FALSE)
 ```
 
+Now we want to remove the "All Other" from the Occupations
+```{r}
+cleaned_occupations <- no_repeats %>% 
+  mutate_at("Occupation", str_replace, ", All Other", "")
+
+# save this file locally
+#write.csv(cleaned_occupations,"C:/Users/Rindala/Desktop/Harvard/FALL 2021/BST 260/260-Project/saavy_salary\\cleaned_occupations.csv", row.names = FALSE)
+
+```
 
 
 ```{r}
