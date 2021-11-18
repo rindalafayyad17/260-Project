@@ -38,8 +38,6 @@ colnames(subset2) <- c("city", "gas", "primary_school", "mcmeal")
 #combining the two new data frames I just created. 
 combined <- left_join(rows_to_cols, subset2, by = "city")
 
-View(combined)
-
 ```
 
 We will do some exploratory analysis of the data to try to get a sense of the relationship between average monthly salary and each of the other predictor variables

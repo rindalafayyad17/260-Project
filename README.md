@@ -46,5 +46,20 @@ The 'Offer Comparison' tab is useful for comparing salary offers across two citi
 
 ## Analysis
 
-### Predicting Average Monthyl Net Salary
+File: Analysis.Rmd
+
+This folder contains some additional data analysis and visualizations.
+
+### Predicting Average Monthly Net Salary
+
+The first analysis was done to predict Average Monthly Net Salary based on other predictor variables. Multiple scatter plots were done to get a first glance at the relationship between average monthly net salary and other variables such as apartment price in city center, apartment price outside of the center, cost of basic utilities, price of 1 gallon of gasoline, price of an inexpensive meal, price of the internet, price of a meal and McDonalds, price of a meal for two, and a yearly tuition for a child and an international primary school. 
+
+We then looked at the distribution of the price of an inexpensive meal and how that price varies in different cities. We also looked the relationship between a McMeal at Mcdonalds and the average monthly net salary per city. 
+
+We performed a linear regression model to predict the average monthly net salary, but we only included as predictors the variables with which average monthly net salary had a linear relationship. 
+
+Finally, we created a Decision Tree using rpart, in another attempt to predict the average monthly next salary based on other variables.
+
+
+
 
