@@ -88,51 +88,6 @@ The __best__ Decision Tree tells us that the average monthly net salary is
 
 Our second focus is the apartment price in city center since it could best reflect the standard of living. When considering job offer, people would prefer to live near city center for convenience, and the price may deviated a lot in different cities. First, we will get a sense about how city center price differ from each city. 
 
-```{r}
-#Histogram for Apartment Price in City Center
-combined %>% ggplot() + 
-  geom_histogram(aes(x = apt_in_center), binwidth = 200, color = "blue", fill = "light blue") + 
-  labs(x = "Apartment Price in City Center") 
-```
-Based on the histogram, we could see the distribution of apartment price in city center is kind of normal but skewed to right a little bit, which indicating the price for most cities is about 1200 to 2000. For some large cities, they could be outliers and have really high prices. 
-
-```{r}
-#Making scatter plot for apartment price in city center to explore the outliers
-combined %>% ggplot(aes(x = city, y = apt_in_center, label = city)) +
-  geom_point(aes(color = "blue"))+
-  geom_text_repel()+
-  labs( x = "City", y = "Apartment Price in City Center")+
-  ggtitle("Scatter Plot for Apartment Price in City Center")+
-  theme(axis.text.x=element_blank(),
-        axis.ticks.x=element_blank(),
-        legend.position = "none")
-
-```
-
-This plot proves our thought that some large cities like New York, Boston, San Francisco have much higher price compare with most of other cities. 
-
-```{r}
-#Draw the relationship between apt in city center and predicted variables
-combined %>% 
-  gather(predictor, value, c(apt_out_center, salary, basics, internet, meal_for_2, inexpensive_meal, gas, primary_school, mcmeal)) %>% 
-  ggplot(aes(x = value, y = apt_in_center)) + 
-  geom_point() + 
-  geom_smooth(color = "light blue") +
-  facet_wrap(~ predictor, scales = 'free_x', labeller = 
-               as_labeller(c("apt_out_center" = "Apartment outside of Center", 
-                             "basics" = "Basics", 
-                             "salary" = "Salary", 
-                             "inexpensive_meal" = "Inexpensive Meal",
-                             "internet" = "Internet",
-                             "meal_for_2" = "Meal for 2",
-                             "gas" = "Gasoline (1 gallon)",
-                             "primary_school" = "Primary School, Yearly for 1 Child",
-                             "mcmeal" = "McMeal at McDonalds"))) + 
-  xlab(NULL) + ylab("Apartment Price in City Center")
-```
-From the above plot, we could see most variables have positive linear relationship with apartment price in city center, and the predictors include apartment outside of city center, gasoline, inexpensive meal, McMeal at McDonalds, meal for 2, primary school, and salary. Basics (Electricity, Heating, Cooling, Water, Garbage for 915 sq ft Apartment) seems have quadratic relationship with apartment price in city center. Internet does not have clear relationship with apartment price 
-
-
 
 ```{r}
 #Regression for apartment price in city center with predictors of apartment price outside city center, basics (in quadratic term), salary, gasoline, inexpensive_meal, primary school, meal for 2
@@ -140,7 +95,7 @@ apt_lm <- lm(apt_in_center ~  apt_out_center + basics^2 + salary  + gas+ inexpen
 summary(apt_lm)
 ```
 
-From the regression, only the coefficient for aparment price out of city center and meanl for 2 is statistically significant using 95% confidence level. So we will do a reduced model with only these two predictors.
+From the regression, only the coefficient for apartment price out of city center and meal for 2 is statistically significant using 95% confidence level. So we will do a reduced model with only these two predictors.
 
 ```{r}
 #A reduced regression model contains only significant predictors apt_out_center and meal_for_2

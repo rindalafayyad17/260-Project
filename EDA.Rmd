@@ -47,7 +47,7 @@ combined %>%
   gather(predictor, value, c(apt_in_center, apt_out_center, basics, internet, meal_for_2, inexpensive_meal, gas, primary_school, mcmeal)) %>% 
   ggplot(aes(x = value, y = salary)) + 
   geom_point() + 
-  geom_smooth(color = "pink") +
+  geom_smooth(color = "lightsteelblue3") +
   facet_wrap(~ predictor, scales = 'free_x', labeller = 
                as_labeller(c("apt_in_center" = "Apartment in Center", 
                              "apt_out_center" = "Apartment outside of Center", 
@@ -58,7 +58,8 @@ combined %>%
                              "gas" = "Gasoline (1 gallon)",
                              "primary_school" = "Primary School, Yearly for 1 Child",
                              "mcmeal" = "McMeal at McDonalds"))) + 
-  xlab(NULL) + ylab("Average MonthLY Net Salary")
+  xlab(NULL) + ylab("Average MonthLY Net Salary") +
+  theme_bw()
 ```
 
 There seems to be a positive relationship between the average monthly net salary and the price of an apartment in the center, the price of an apartment outside of the center, the price of a meal for two in a mid-range restaurant, the price of 1 gallon of gasoline, the price of a McMeal at McDonalds, and the tuition for 1 child at an international primary school.
@@ -67,8 +68,9 @@ However, looking at the plots, there does not seem to be a significant relations
 
 ```{r}
 combined %>% ggplot() + 
-  geom_histogram(aes(x = inexpensive_meal), binwidth = 1, color = "black", fill = "pink") + 
-  labs(x = "Price of Inexpensive meal") 
+  geom_histogram(aes(x = inexpensive_meal), binwidth = 1, color = "black", fill = "lightsteelblue3") + 
+  labs(x = "Price of Inexpensive meal")+
+  theme_bw()
 ```
 
 It seems that most cities have the same average price for an inexpensive meal (around $15) which explains why there is no significant relationship between the average monthly net salary and the price of an inexpensive meal.
@@ -76,13 +78,63 @@ It seems that most cities have the same average price for an inexpensive meal (a
 ```{r}
 library(ggrepel)
 combined %>% ggplot(aes(x = mcmeal, y = salary, label = city)) +
-  geom_point(aes(color = "pink"))+
+  geom_point(color = "lightsteelblue3")+
   geom_text_repel()+
   labs( x = "McMeal at McDonalds", y = "Average Monthly Net Salary")+
-  theme(legend.position = "none")
+  theme(legend.position = "none")+
+  theme_bw()
 
 ```
 
 The cities with the most expensive McMeals at McDonalds are San Francisco, Seattle, Boston and Virginia Beach. The cities with the lowest McMeal prices are El Paso, Mesa and Memphis. We notice that these latter 3 cities are also the ones with the lowest average monthly net salary. Similarly, San Francisco has the highest McMeal Price and the highest average monthly net salary. 
 
 
+Our second focus is the apartment price in city center since it could best reflect the standard of living. When considering job offer, people would prefer to live near city center for convenience, and the price may deviated a lot in different cities. First, we will get a sense about how city center price differ from each city. 
+
+```{r}
+#Histogram for Apartment Price in City Center
+combined %>% ggplot() + 
+  geom_histogram(aes(x = apt_in_center), binwidth = 200, color = "black", fill = "lightsteelblue3") + 
+  labs(x = "Apartment Price in City Center")+
+  theme_bw()
+```
+
+Based on the histogram, we could see the distribution of apartment price in city center is skewed to the right a little bit,indicating that the price of an apartment in the city center for most cities is between 1200 and 2000. There are some outliers which indicates that some cities have exceptionally large prices of apartments inside of the center. 
+
+```{r}
+#Making scatter plot for apartment price in city center to explore the outliers
+combined %>% ggplot(aes(x = city, y = apt_in_center, label = city)) +
+  geom_point(color = "lightsteelblue3")+
+  geom_text_repel()+
+  labs( x = "City", y = "Apartment Price in City Center")+
+  ggtitle("Scatter Plot for Apartment Price in City Center")+
+  theme(axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        legend.position = "none")+
+  theme_bw()
+
+```
+
+This plot proves our thought that some large cities like New York, Boston, San Francisco have much higher prices of apartments in the center compared to other cities. 
+
+```{r}
+#Draw the relationship between apt in city center and predicted variables
+combined %>% 
+  gather(predictor, value, c(apt_out_center, salary, basics, internet, meal_for_2, inexpensive_meal, gas, primary_school, mcmeal)) %>% 
+  ggplot(aes(x = value, y = apt_in_center)) + 
+  geom_point() + 
+  geom_smooth(color = "lightsteelblue3") +
+  facet_wrap(~ predictor, scales = 'free_x', labeller = 
+               as_labeller(c("apt_out_center" = "Apartment outside of Center", 
+                             "basics" = "Basics", 
+                             "salary" = "Salary", 
+                             "inexpensive_meal" = "Inexpensive Meal",
+                             "internet" = "Internet",
+                             "meal_for_2" = "Meal for 2",
+                             "gas" = "Gasoline (1 gallon)",
+                             "primary_school" = "Primary School, Yearly for 1 Child",
+                             "mcmeal" = "McMeal at McDonalds"))) + 
+  xlab(NULL) + ylab("Apartment Price in City Center")+
+  theme_bw()
+```
+From the above plot, we could see most variables have positive linear relationship with apartment price in city center, and the predictors include apartment outside of city center, gasoline, inexpensive meal, McMeal at McDonalds, meal for 2, primary school, and salary. Basics (Electricity, Heating, Cooling, Water, Garbage for 915 sq ft Apartment) seems have quadratic relationship with apartment price in city center. Internet does not have clear relationship with apartment price 
