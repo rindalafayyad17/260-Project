@@ -44,6 +44,21 @@ The 'Offer Comparison' tab is useful for comparing salary offers across two citi
 2) the average monthly salary for your inputted offer
 3) the discretionary income (2-1) after accounting for cost of living
 
+## EDA
+
+We first looked at the relationship between the average monthly salary in a city and different predictor variables.Multiple scatter plots were done to get a first glance at the relationship between average monthly net salary and other variables such as apartment price in city center, apartment price outside of the center, cost of basic utilities, price of 1 gallon of gasoline, price of an inexpensive meal, price of the internet, price of a meal and McDonalds, price of a meal for two, and a yearly tuition for a child and an international primary school. 
+
+We then looked at the distribution of the price of an inexpensive meal and how that price varies in different cities. 
+
+We also looked at the relationship between a McMeal at Mcdonalds and the average monthly net salary per city. This plot was also able to tell us which cities had the highest cost of a McMeal and Mcdonalds. 
+
+We then looked at the distribution of the apartment prices in the centers of the cities. We noticed that there were outliers, so we plotted a 1D graph showing the apartment price in the city center of each city, and were able to determine what cities correspond to these outliers.
+
+We then looked at the relationship between the apartment price in the city center and all the different predictor variables mentioned above. 
+
+We then plotted the average salary vs average living expenses in each city, and the relationship that we got did not surprise us: the higher the living expenses, the higher the salary. 
+
+
 ## Analysis
 
 File: Analysis.Rmd
@@ -52,13 +67,9 @@ This folder contains some additional data analysis and visualizations.
 
 ### Predicting Average Monthly Net Salary
 
-The first analysis was done to predict Average Monthly Net Salary based on other predictor variables. Multiple scatter plots were done to get a first glance at the relationship between average monthly net salary and other variables such as apartment price in city center, apartment price outside of the center, cost of basic utilities, price of 1 gallon of gasoline, price of an inexpensive meal, price of the internet, price of a meal and McDonalds, price of a meal for two, and a yearly tuition for a child and an international primary school. 
+We performed a linear regression model to predict the average monthly net salary, but we only included as predictors the variables with which average monthly net salary had a linear relationship (we looked at the relationships in the EDA file)
 
-We then looked at the distribution of the price of an inexpensive meal and how that price varies in different cities. We also looked the relationship between a McMeal at Mcdonalds and the average monthly net salary per city. 
-
-We performed a linear regression model to predict the average monthly net salary, but we only included as predictors the variables with which average monthly net salary had a linear relationship. 
-
-Finally, we created a Decision Tree using rpart, in another attempt to predict the average monthly next salary based on other variables.
+We then created a Decision Tree using rpart, in another attempt to predict the average monthly next salary based on other variables.
 
 
 

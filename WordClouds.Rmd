@@ -66,31 +66,10 @@ annual_expenses=cost %>%
 #merge the two dataframe
 salary_expenses_byCity <- merge(mean_salary,annual_expenses,by="city")
 names(salary_expenses_byCity)[2] <- "AnnualSalary"
+
+#Saving the data frame as a csv
+#write.csv(salary_expenses_byCity,"C:/Users/Rindala/Desktop/Harvard/FALL 2021/BST 260/260-Project\\salary_expenses_byCity.csv", row.names = FALSE)
 ```
-```{r}
-
-salary_expenses_byCity %>% ggplot(aes(x = AnnualExpenses, y = AnnualSalary , label = city)) + 
-  geom_point(aes(x = AnnualExpenses, y = AnnualSalary, label = city), size = 2) +
-  geom_smooth(method = lm)+
-  geom_text_repel() +
-  xlab("Annual average living expenses in each city") + 
-  ylab("Annual average salary in each city") +
-  ggtitle("Average Salary VS. Average Living Expenses in Each City") +
-  theme_economist()
-
-```
-
-## Contrast Average Salary VS. Average Living Expenses in Each City
-
-According to the scatter plot, we can see that there is a clear trade-off between average salary and average living expenses in each city in the USA. Generally speaking, in the cities where people have higher annual average salary, the annual average living expenses will also be higher. 
-
-Comparing Boston and New York in this plot, we can see that Boston has a higher annual average salary while lower annual average living expenses. In this sense, Boston is more comfortable to live in than New York. Cities with highest annual average salaries are San Jose, San Francisco, and Oakland. All of the three are in the Bay area. Comparing the three cities, San Jose is the most comfortable to live in. 
-
-
-
-
-
-
 
 
 ## Word Cloud

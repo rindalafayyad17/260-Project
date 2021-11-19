@@ -99,23 +99,28 @@ combined %>% ggplot() +
   theme_bw()
 ```
 
-Based on the histogram, we could see the distribution of apartment price in city center is skewed to the right a little bit,indicating that the price of an apartment in the city center for most cities is between 1200 and 2000. There are some outliers which indicates that some cities have exceptionally large prices of apartments inside of the center. 
+Based on the histogram, we could see the distribution of apartment price in city center is skewed to the right a little bit,indicating that the price of an apartment in the city center for most cities is between 1200 and 2000. There are some outliers which indicates that some cities have exceptionally large prices of apartments inside of the center. Below we are going to check which cities correspond to these outliers.
 
 ```{r}
-#Making scatter plot for apartment price in city center to explore the outliers
-combined %>% ggplot(aes(x = city, y = apt_in_center, label = city)) +
-  geom_point(color = "lightsteelblue3")+
+
+combined %>% ggplot(aes(x = apt_in_center, y=0, label = city)) +
+  geom_point(size = 3, color = "lightsteelblue3")  +
+  annotate("segment",x=705.71,xend=3119.48, y=0, yend=0, size=1) +
+  annotate("segment",x=705.71,xend=705.71, y=-0.1,yend=0.1, size=1) +
+  annotate("segment",x=3119.48,xend=3119.48, y=-0.1,yend=0.1, size=1) +
   geom_text_repel()+
-  labs( x = "City", y = "Apartment Price in City Center")+
-  ggtitle("Scatter Plot for Apartment Price in City Center")+
-  theme(axis.text.x=element_blank(),
-        axis.ticks.x=element_blank(),
-        legend.position = "none")+
-  theme_bw()
-
+  scale_x_continuous(limits = c(705,3120)) +
+  scale_y_continuous(limits = c(-1,1)) +
+  scale_color_manual(values = unname(colours)) + 
+  theme(panel.background = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title = element_blank())+
+  ggtitle("Apartment Price in City Center")+
+  geom_text(label = "705.71", x = 705.71, y = 0.15, color = "lightsteelblue3") +
+  geom_text(label = "3119.48", x = 3119.48, y = 0.152, color = "lightsteelblue3")
 ```
-
-This plot proves our thought that some large cities like New York, Boston, San Francisco have much higher prices of apartments in the center compared to other cities. 
+This 1D plot shows us that the outliers that we saw in the histogram correspond to New York, San Franciso, Oakland and Boston. Also, the city with the cheapest apartment inside the center is El Paso.
 
 ```{r}
 #Draw the relationship between apt in city center and predicted variables
@@ -137,4 +142,25 @@ combined %>%
   xlab(NULL) + ylab("Apartment Price in City Center")+
   theme_bw()
 ```
-From the above plot, we could see most variables have positive linear relationship with apartment price in city center, and the predictors include apartment outside of city center, gasoline, inexpensive meal, McMeal at McDonalds, meal for 2, primary school, and salary. Basics (Electricity, Heating, Cooling, Water, Garbage for 915 sq ft Apartment) seems have quadratic relationship with apartment price in city center. Internet does not have clear relationship with apartment price 
+From the above plot, we could see that most variables have positive linear relationship with apartment price in city center, and the predictors include apartment outside of city center, gasoline, inexpensive meal, McMeal at McDonalds, meal for 2, primary school, and salary. Basics (Electricity, Heating, Cooling, Water, Garbage for 915 sq ft Apartment) seem to have a quadratic relationship with apartment price in city center. Internet does not have clear relationship with apartment price.
+
+
+
+```{r}
+salary_expenses_byCity <- read.csv("salary_expenses_byCity.csv", header = TRUE)
+
+salary_expenses_byCity %>% ggplot(aes(x = AnnualExpenses, y = AnnualSalary , label = city)) + 
+  geom_point(aes(x = AnnualExpenses, y = AnnualSalary, label = city), size = 2, color = "lightsteelblue3") +
+  geom_smooth(method = lm, se = FALSE)+
+  geom_text_repel() +
+  xlab("Annual average living expenses in each city") + 
+  ylab("Annual average salary in each city") +
+  ggtitle("Average Salary VS. Average Living Expenses in Each City") +
+  theme_bw()
+```
+
+According to the scatter plot, we can see that there is a clear trade-off between average salary and average living expenses in each city in the USA. Generally speaking, in the cities where people have higher annual average salary, the annual average living expenses will also be higher. 
+
+Comparing Boston and New York in this plot, we can see that Boston has a higher annual average salary while lower annual average living expenses. In this sense, Boston is more comfortable to live in than New York. Cities with highest annual average salaries are San Jose, San Francisco, and Oakland. All of the three are in the Bay area. Comparing the three cities, San Jose is the most comfortable to live in. 
+
+
