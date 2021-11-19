@@ -215,10 +215,6 @@ webshot("tmp.html", "wordcloud/Raleigh.png", delay = 5, vwidth = 500, vheight = 
 
 
 
-
-
-
-
 According to these word cloud of high-paid jobs in different cities, it is obvious that cities in different areas has different features.
 In the north east of USA, New York has more high-paid jobs related to financial services while in Boston high salaries are more correlated with medicine. San Diego has a similar distribution of high-paid jobs with Boston, both of which have a great emphasis on the health-care industry.
 In the Bay area, we can see that there are more high-paid jobs in the computer science industry.
