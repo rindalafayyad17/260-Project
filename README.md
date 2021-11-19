@@ -59,6 +59,17 @@ We then looked at the relationship between the apartment price in the city cente
 We then plotted the average salary vs average living expenses in each city, and the relationship that we got did not surprise us: the higher the living expenses, the higher the salary. 
 
 
+## WordClouds
+
+File: WordClouds.Rmd
+
+First, at the national level, we created a wordcloud for the occupations with salaries higher than the 95th percentile in the 50 cities. The wordcloud picture was stored as total.png in the wordcloud folder.
+
+Then, We would like to investigate whether there is difference among the high-paying jobs in different cities in the USA. Thus, we created the wordcloud for the high-paying jobs in different cities. The wordcloud pictures were stored in the wordcloud folder, named after the city name. tmp.html is the temporary html file created for converting the interactive wordcloud to a static picture.
+
+In the tmp_files folders, there are some JavaScript files needed by running the wordcloud2 packages.
+
+
 ## Analysis
 
 File: Analysis.Rmd
