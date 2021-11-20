@@ -155,7 +155,9 @@ rmse = caret::RMSE(test_y, pred_y)
 #Print out the relevance of each predictors from the gradient boosting trees model
 xgb.importance(colnames(train_x), model = xgbc)
 ```
-Here, we use the gradient boosting trees algorithm to train the model. From this model we could get the relative importance in prediction of the apartment price in the city center. The gain means how much each predictors contributed to the model. From this machine learning model, it's apt_out_center as the most importance one, the salary as the second importance one. 
+Here, we use the gradient boosting trees algorithm to train the model. From this model we could get the relative importance in prediction of the apartment price in the city center. The gain means how much each predictors contributed to the model. From this machine learning model, it's apt_out_center as the most importance one, the salary as the second importance one. The cover means the relative number of observations, and apt_out_center has the highest cover. Frequency is the percentage measuring the relative time a particular tree, and the result is similar as the previous two measure where apt_out_center has the top percentage.
+
+The importance of the predicted variables is similar as the regression model.
 
 
 

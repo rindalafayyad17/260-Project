@@ -82,6 +82,10 @@ We performed a linear regression model to predict the average monthly net salary
 
 We then created a Decision Tree using rpart, in another attempt to predict the average monthly next salary based on other variables.
 
+We also performed linear regression model to predict the apartment price in the city center. We pick the predictor based on the graph in EDA file and choose the predictor has clear relationship. 
+
+We used gradient boosting trees algorithm to test the relevance of each predicted variables and test the importance of each variables and compared with the importance level with the result from regression models.
+
 
 
 
