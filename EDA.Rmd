@@ -70,7 +70,8 @@ However, looking at the plots, there does not seem to be a significant relations
 combined %>% ggplot() + 
   geom_histogram(aes(x = inexpensive_meal), binwidth = 1, color = "black", fill = "lightsteelblue3") + 
   labs(x = "Price of Inexpensive meal")+
-  theme_bw()
+  theme_bw()+
+  ggtitle("Distribution of Price of Inexpensive Meals per City")
 ```
 
 It seems that most cities have the same average price for an inexpensive meal (around $15) which explains why there is no significant relationship between the average monthly net salary and the price of an inexpensive meal.
@@ -96,7 +97,8 @@ Our second focus is the apartment price in city center since it could best refle
 combined %>% ggplot() + 
   geom_histogram(aes(x = apt_in_center), binwidth = 200, color = "black", fill = "lightsteelblue3") + 
   labs(x = "Apartment Price in City Center")+
-  theme_bw()
+  theme_bw() +
+  ggtitle("Distribution of the Apartment Prices in City Center")
 ```
 
 Based on the histogram, we could see the distribution of apartment price in city center is skewed to the right a little bit,indicating that the price of an apartment in the city center for most cities is between 1200 and 2000. There are some outliers which indicates that some cities have exceptionally large prices of apartments inside of the center. Below we are going to check which cities correspond to these outliers.

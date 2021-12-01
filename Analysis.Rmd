@@ -60,7 +60,7 @@ For a `$`100 increase in the price of an apartment outside of the center, the av
 For a `$`1000 increase in the yearly tuition for 1 child at an international primary school, the average monthly net salary in a city increases by `$`22.6 on average, keeping the other two covariates constant.
 
 
-We will now create a Decision Tree to predict the average monthyl net salary based on the price of an apartment in the center, the price of an apartment outside of the center, basic utilities, the price of an inexpensive meal, the price of the internet, the price of a meal for two, the price of 1 gallon of gas, the price of a McMeal, and the 1 year tuition for one child at an international primary school.
+We will now create a Decision Tree to predict the average monthly net salary based on the price of an apartment in the center, the price of an apartment outside of the center, basic utilities, the price of an inexpensive meal, the price of the internet, the price of a meal for two, the price of 1 gallon of gas, the price of a McMeal, and the 1 year tuition for one child at an international primary school.
 ```{r}
 #creating a Decision tree using rpart
 fit_rpart <- rpart(salary ~ apt_in_center + apt_out_center + basics + inexpensive_meal + internet + meal_for_2 + gas + mcmeal + primary_school, data = combined) 
@@ -105,9 +105,9 @@ summary(apt_lm_r)
 
 From above regression, the coefficient for apartment price out of city center and meal for 2 are all positive indicating there is positive relationship between apartment price in city center and the two predictors. 
 
-Holding all other variables constant, for one dollar increase in the apartment price outside city center, the estimated price for apartment price in city center will increase 1.05686 dollar on average.
+Holding all other variables constant, for 100 dollar increase in the apartment price outside city center, the estimated price for apartment price in city center will increase 106$ dollar on average.
 
-Holding all other variables constant, for one dollar increase in the mean for two, the estimated price for apartment price in city center will increase 9.53476 dollar on average.
+Holding all other variables constant, for one dollar increase in the meal for two, the estimated price for apartment price in city center will increase 9.5 dollar on average.
 
 ```{r}
 #Using gradient boosting trees algorithm to test the relevance of each predicted variables
