@@ -83,67 +83,104 @@ library(RColorBrewer)
 library(wordcloud2)
 library(tm)
 
+##create the overall wordcloud image of high-paying jobs in the 50 cities
+
+#select out all of the highwages occupations (>95% percentile)
 highWages_all<- wages %>%
             drop_na() %>%
             filter(as.numeric(annual)>quantile(as.numeric(annual), prob=c(.95))) 
 
-
+#save only the occupation names
 text <- highWages_all$occupation
 
-
+#to form a corpus of the occupation names
 docs_all <- Corpus(VectorSource(text))
-docs_all <- docs_all %>%
-  tm_map(removeNumbers) %>%
-  tm_map(removePunctuation) %>%
-  tm_map(stripWhitespace)
-docs_all <- tm_map(docs_all, content_transformer(tolower))
-docs_all <- tm_map(docs_all, removeWords, stopwords("english"))
 
+## do the cleaning in the corpus
+
+
+docs_all <- docs_all %>%
+  tm_map(removeNumbers) %>% #remove numbers
+  tm_map(removePunctuation) %>% #remove punctuation
+  tm_map(stripWhitespace) #strip white spaces
+
+# convert to lower case
+docs_all <- tm_map(docs_all, content_transformer(tolower)) 
+#remove some nonsense word like "the", "and"
+docs_all <- tm_map(docs_all, removeWords, stopwords("english")) 
+
+
+#convert the corpus as matrix and sort all of the words according to the frequency
 dtm_all <- TermDocumentMatrix(docs_all) 
 matrix_all <- as.matrix(dtm_all) 
 words_all <- sort(rowSums(matrix_all),decreasing=TRUE) 
+
+#convert the matrix to dataframe and indicate the frequency of the words
 df_all <- data.frame(word = names(words_all),freq=words_all)
+
+#filter out some words that have no specific meanings
 df_all <- df_all %>%
   filter(word != "managers" & word != "general" &  word != "except" & word != "occupations" & word != "firstline" & word != "personal")
 
 set.seed(12) # for reproducibility 
 
+#create the wordcloud with the dataframe of words
 my_graph=wordcloud2(data=df_all, size=0.5, color='random-dark')
+
+#save it to image
 saveWidget(my_graph, "tmp.html", selfcontained = F)
 webshot("tmp.html", "wordcloud/total.png", delay = 5, vwidth = 500, vheight = 500)
 
 
 ```
-On general, the occupations with salaries higher than the 95th percentile in these cities are more related with physicians, computer science and financial services.
+In general, the occupations with salaries higher than the 95th percentile in these cities are more related with physicians, computer science and financial services.
 
 
 
 
 ```{r}
 
+#define a function to create the wordcloud image of a specified city
 word_cloud_HighWages <- function(a) { # input a is a string of city name
+  
+#select out all of the highwages occupations (>95% percentile) in the city specified
 highWages<- wages %>%
             drop_na() %>%
             filter(city == a & as.numeric(annual)>quantile(as.numeric(annual), prob=c(.95))) 
 
-
+#save only the occupation names
 text <- highWages$occupation
 
+#to form a corpus of the occupation names
 docs <- Corpus(VectorSource(text))
 
+## do the cleaning in the corpus
+
+#remove punctuation
 docs <- docs %>%
-  tm_map(removePunctuation)
+        tm_map(removePunctuation)
+
+#transform to the lower case
 docs <- tm_map(docs, content_transformer(tolower))
+
+#remove some nonsense word like "the", "and"
 docs <- tm_map(docs, removeWords, stopwords("english"))
+
+#convert the corpus as matrix and sort all of the words according to the frequency
 dtm <- TermDocumentMatrix(docs) 
 matrix <- as.matrix(dtm) 
 words <- sort(rowSums(matrix),decreasing=TRUE) 
+
+#convert the matrix to dataframe and indicate the frequency of the words
 df <- data.frame(word = names(words),freq=words)
+
+#filter out some words that have no specific meanings
 df <- df %>%
   filter(word != "managers" & word != "general" &  word != "except" & word != "occupations" & word != "firstline")
 
 set.seed(12) # for reproducibility 
 
+#create the wordcloud with the dataframe of words
 wordcloud2(data=df, size=0.5, color='random-dark')
 }
 
@@ -190,7 +227,7 @@ webshot("tmp.html", "wordcloud/New York.png", delay = 5, vwidth = 500, vheight =
 ```{r}
 my_graph=word_cloud_HighWages("Los Angeles")
 saveWidget(my_graph, "tmp.html", selfcontained = F)
-webshot("tmp.html", "wordcloud/Lod Angeles.png", delay = 5, vwidth = 500, vheight = 500)
+webshot("tmp.html", "wordcloud/Los Angeles.png", delay = 5, vwidth = 500, vheight = 500)
 
 ```
 
@@ -215,7 +252,16 @@ webshot("tmp.html", "wordcloud/Raleigh.png", delay = 5, vwidth = 500, vheight = 
 
 
 According to these word cloud of high-paying jobs in different cities, it is obvious that cities in different areas has different features.
-In the north east of USA, New York has more high-paying jobs related to financial services while in Boston high salaries are more correlated with medicine. San Diego has a similar distribution of high-paying jobs with Boston, both of which have a great emphasis on the health-care industry.
-In the Bay area, we can see that there are more high-paid jobs in the computer science industry.
+
+In the north east of USA, New York has more high-paying jobs related to financial services while in Boston high salaries are more correlated with medicine. 
+San Diego has a similar distribution of high-paying jobs with Boston, both of which have a great emphasis on the health-care industry. 
+In the Bay area, we can see that there are more high-paying jobs in the computer science industry. For example, in the word cloud of San Francisco and San Jose, the word "computer" and "engineer" appears the most frequently.
+
+In Raleigh, which is largest city of the Research Triangle metro area, high-paying jobs are more related with physicians and medicine.
+
+In Chicago, which is the most populous city in the Midwestern United States, high-paying jobs are more related with the medicine industry and the financial industry.
+
+When it comes to Kansas City, which is one of ten regional office cities for the US government, the word "Judges" appears the most frequently in the list of high-paying jobs. 
+
 
 
