@@ -14,13 +14,13 @@ The motivation of this project is to help create an interface, in the form of a 
 
 ### Project Objectives
 
-The primary objective of the study is to put together salary data for various job titles in 50 US cities (similar to something you would see on Glassdoor) and additionally include the important cost of living measures such as apartment costs, meal costs, utilities, and other relevant information. The shiny dashboard is the pillar of the project; however, there are various other bits of information we can use to better understand these relationships. 
+The primary objective of the study is to put together salary data for various job titles in 50 US cities (similar to something you would see on Glassdoor) and additionally include the important cost of living measures such as apartment costs, meal costs, utilities, and other relevant information. The shiny dashboard is the pillar of the project; however, there are various other bits of information we can use to better understand these relationships.  For examples, visualizations are a key driver of our ability to make decisions with data. A powerful scatterplot can often convince someone of a decision in a way that a complex analysis may not be able to manage.  
 
-Visualizations are a key driver of our ability to make decisions with data. A powerful scatterplot can often convince someone of a decision in a way that a complex analysis may not be able to manage. As such, the goal will be to include visualizations that will help to assess the salaries needed for the cost of living across our 50 cities. Ideally, such visualization will be interactive and can be a separate tab or section of our dashboard, or simply included in our report. 
-
-We are also interested in predicting the rent per month or apartment price per city based on other variables from our dataset. 
+We are also interested in predicting the average salary and apartment price in the city center based on other cost variables from our dataset. We do so through regression and machine learning models. We also want to visualize through word clouds how the highest paid jobs in certain cities compare to the highest paid jobs in different cities.
 
 The end-goal is to create an app that people can use to compare different job offers in different cities, and make a decision based on the salary and the cities’ costs of living. We want to make it easier for people to choose the “best” job offer. 
+
+
 
 ### Data Source
 
