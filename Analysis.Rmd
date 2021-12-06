@@ -151,6 +151,7 @@ rmse = caret::RMSE(test_y, pred_y)
 
 
 ```
+
 ```{r}
 #Print out the relevance of each predictors from the gradient boosting trees model
 xgb.importance(colnames(train_x), model = xgbc)

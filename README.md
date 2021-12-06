@@ -6,7 +6,13 @@ A salary comparison dashboard and analysis into cost of living and salary data.
 
 The files should be looked at in the order described below:
 
-## Project Description and Data Collection
+## Description
+
+File: Description.Rmd 
+
+This file contains information about the project overview and motivation, objectives, related work, initial questions, data, exploratory analysis, and final analysis. However, details about Data collection, EDA and Final analyses can be found in their respective files. 
+
+## Data Collection and Cleaning
 
 File: 260 proj data collection.rmd
 
@@ -37,7 +43,8 @@ We then plotted the average salary vs average living expenses in each city, and 
 
 ## WordClouds
 
-File: WordClouds.Rmd
+File: WordClouds.Rmd, wordcloud folder and tmp_files folder
+
 
 First, at the national level, we created a wordcloud for the occupations with salaries higher than the 95th percentile in the 50 cities. The wordcloud picture was stored as total.png in the wordcloud folder.
 

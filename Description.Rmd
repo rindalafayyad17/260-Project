@@ -1,0 +1,49 @@
+---
+title: "Project Description"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Background and Motivation
+
+Over the course of our time as students here at the Harvard Chan School of Public Health, we will almost assuredly reach a point where we must assess our next professional move. For some, the answer may be continuing education via a doctoral program; however, others may join the workforce. 
+
+Throughout this process, we will hopefully garner offers for positions from companies in varying cities. If we are in the fortunate circumstance to have to decide on competing offers, it would seem logical to compare the salaries across our offers. As educated members of Harvard University, we may decide that a more comprehensive comparison may be important. How far will my salary go in New York City? What is the cost of living in New Orleans? How much does an apartment cost, on average, in Des Moines, Iowa compared to Cambridge? Can I afford to go back to sunny Southern California?
+
+The motivation of this project is to help create an interface, in the form of a shiny dashboard, to input salary offers and cities and comprehensively compare the offers in the form of summary statistics and visualizations --without the need of searching on Glassdoor,  LinkedIn, Zillow, and Yelp separately. 
+
+
+### Project Objectives
+
+The primary objective of the study is to put together salary data for various job titles in 50 US cities (similar to something you would see on Glassdoor) and additionally include the important cost of living measures such as apartment costs, meal costs, utilities, and other relevant information. The shiny dashboard is the pillar of the project; however, there are various other bits of information we can use to better understand these relationships.  For examples, visualizations are a key driver of our ability to make decisions with data. A powerful scatterplot can often convince someone of a decision in a way that a complex analysis may not be able to manage. The end-goal is to create an app that people can use to compare different job offers in different cities, and make a decision based on the salary and the cities’ costs of living. We want to make it easier for people to choose the “best” job offer. 
+
+### Related work
+
+Our main inspiration was websites like Glassdoor and Yelp where people can search for information and feedback about jobs. We want to create a very simple interface where one can input salary offers and cities and comprehensively compare the offers in the form of summary statistics and visualizations --without the need of searching on Glassdoor,  LinkedIn, Zillow, and Yelp separately. 
+
+
+### Initial Questions
+
+We were initially only interested in creating the app where we could compare two job offers in two different cities. After collecting, cleaning and analyzing the data, we became interested in predicting the average salary and apartment price in the city center based on other cost variables from our dataset. We first did so using regression analysis, but then we also included two machine learning models. In addition, we were curious about how the highest paid jobs differ in different cities. As such, we decided to compare the highest paid jobs in certain cities, and we wanted to do so in an interesting/non-conventional way, so we answered this question by creating multiple word clouds.
+
+
+### Data
+
+Our data is sourced from two distinct locations: numbeo.com and the Bureau of Labor Statistics (BLS). 
+ 
+Numbeo offers data on the cost of living such as the cost of an inexpensive restaurant, the cost of milk, the cost of gas, the cost of childcare, average apartment cost (rent) for 1 bedroom inside the city, price per square foot to buy an apartment. This data was gathered via web scraping. The URL changes in a uniform manner when looking at new cities so the URL was easily manipulated to access our data and save it locally.  
+
+BLS actually provides data on the average salaries of various job titles in metropolitan areas across the US. Since the data is not granular enough to be only to one particular city (i.e. Boston metro including Cambridge and neighboring cities,  not simply Boston proper), we used the metropolitan salary data as a proxy. This data was accessed directly from the site as separate files which were bound together. The data was then cleaned and rearranged appropriately. 
+
+### Exploratory Analysis
+
+All of our EDA was done and explained in the EDA.Rmd file. 
+
+### Final Analysis
+
+The regression and machine learning analyses were done and explained in the Analysis.Rmd file, and the Word Clouds analyses were done and explained in the WordClouds.Rmd file. The app was done separately in the app.R file in the saavy_salary folder. 
+
+
