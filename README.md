@@ -1,5 +1,5 @@
 # 260-Project
-# Authors: Rindala Fayyad, Daniel Herrera, Nona Jiang, Yuning Liu, Mengyao Zheng
+#### Authors: Rindala Fayyad, Daniel Herrera, Nona Jiang, Yuning Liu, Mengyao Zheng
 
 # Checks and Cities
 
