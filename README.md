@@ -18,11 +18,12 @@ File: 260 proj data collection.rmd
 
 This file starts by describing our project and stating our goals and objectives. 
 
-The cost of living data for this dashboard was collected using webscraping with the 'rvest' and 'httr' packages within R. This data was then cleaned utilizing the tidyverse, and subsequent dplyr functions, and will be utilized within the shiny app and other analysis. The current markdown file will not attempt to create this dataset again since it requires assessing the server to pull the data for the cost of living. We do this to be polite, but leave the command in the file commented out. There are files which include "col" in the title for this data. However, either 'full_col_data.csv' and 'col_citydata.csv' are the files generally used in the analysis and shiny app sections.
+The cost of living (COL) data for this dashboard was collected using webscraping with the 'rvest' and 'httr' packages within R from numbeo.com. This process was done first for a  subset of some important COL metrics and again to extract more COL metrics for each city, resulting in the 'fulldata.csv' file.  These datasets were then cleaned utilizing the tidyverse and subsequent dplyr functions,resulting in the 'col_citydata.csv' for the subset and 'full_col_data.csv' for the full dataset. The dataset 'ful_col_data.csv' was utilized for the shiny app, while a combination of 'col_citydata' and 'full_col_data' was utilized for the analysis.
 
-The wages data for this dashboard was collected from the Bureau of Labor Statistics (BLS) for 50 cities in the United States. The data are accessible online. This data were lightly cleaned and are found as cleaned_occupations.csv. 
+The current markdown file will not attempt to create the COL datasets again since it requires accessing the server to pull the data for the cost of living. We do this to be polite, but leave the command in the file commented out. There are files which include "col" in the title for this data. 
 
-Both of these datasets are found within the folder for the shiny app, so they will be found when implementing the shiny app. 
+The wages data for this dashboard was collected from the Bureau of Labor Statistics (BLS) for 50 cities in the United States. The data are accessible online. The inital data is stores as 'wages.csv'. This data was then lightly cleaned, removing special charaters and keeping only unique rows for city/occupations, resulting in the dataset 'wages_norepeats.csv'. Strictly for aesthetic reasons in the ggplot of the shinyapp, 'cleaned_occupations.csv' removed the "all others" found in some occupation names. 
+
 
 ## EDA
 
