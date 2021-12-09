@@ -84,6 +84,7 @@ The __best__ Decision Tree tells us that the average monthly net salary is
         - `$`4098 in the cities where the internet (60 Mbps or More, Unlimited Data, Cable/ADSL) costs at least `$`63.42
 
 
+Both the linear regression and the decision tree give informative salary predictions, but the decision tree was able to take all of the variables as predictors (even those that do not have a linear relationship with salary) and told us which variables are the most significant predictors in our model. Two of the predictors are the same in the regression model and the decision tree model, but one variable differs. In terms of interpretability, both models are easy to interpret. In our case we would prefer the linear regression model because it gives us specific estimates for our coefficients, which we can use in predicting the average monthly net salary in cities not included in our dataset. 
 
 
 Our second focus is the apartment price in city center since it could best reflect the standard of living. When considering job offer, people would prefer to live near city center for convenience, and the price may deviated a lot in different cities. First, we will get a sense about how city center price differ from each city. 
