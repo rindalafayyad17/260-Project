@@ -93,7 +93,7 @@ Our second focus is the apartment price in city center since it could best refle
 ```{r}
 #Regression for apartment price in city center with predictors of apartment price outside city center, basics (in quadratic term), salary, gasoline, inexpensive_meal, primary school, meal for 2
 apt_lm <- lm(apt_in_center ~  apt_out_center + basics^2 + salary  + gas+ inexpensive_meal + primary_school + meal_for_2, data = combined)
-summary(apt_lm)
+#summary(apt_lm)
 ```
 
 From the regression, only the coefficient for apartment price out of city center and meal for 2 is statistically significant using 95% confidence level. So we will do a reduced model with only these two predictors.
@@ -110,7 +110,7 @@ Holding all other variables constant, for 100 dollar increase in the apartment p
 
 Holding all other variables constant, for one dollar increase in the meal for two, the estimated price for apartment price in city center will increase 9.5 dollar on average.
 
-```{r}
+```{r analysis, results="markup"}
 #Using gradient boosting trees algorithm to test the relevance of each predicted variables
 #Code Source: https://www.datatechnotes.com/2020/08/regression-example-with-xgboost-in-r.html
 #load required library
@@ -138,8 +138,10 @@ xgb_test = xgb.DMatrix(data = test_x, label = test_y)
 
 #Fit the model using xgboost package
 #max.depth indicates the depth of the tree and nrounds indicates how many rounds to train 
-xgbc = xgboost(data = xgb_train, max.depth = 2, nrounds = 50)
-print(xgbc)
+#xgbc = xgboost(data = xgb_train, max.depth = 2, nrounds = 50)
+xgbc = xgb.train(data = xgb_train, max.depth = 2, nrounds = 50)
+
+#print(xgbc)
 
 #Predict apt_in_center with trained model
 pred_y = predict(xgbc, xgb_test)
@@ -148,7 +150,6 @@ pred_y = predict(xgbc, xgb_test)
 mse = mean((test_y - pred_y)^2)
 mae = caret::MAE(test_y, pred_y)
 rmse = caret::RMSE(test_y, pred_y)
-
 
 
 ```
