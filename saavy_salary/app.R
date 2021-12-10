@@ -64,7 +64,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                  
                                  # for this panel this is the main panel output
                                  mainPanel(
-                                     verbatimTextOutput(outputId = "citysalary"),
+                                     textOutput(outputId = "citysalary"),
                                  )
                              )
                     ),
