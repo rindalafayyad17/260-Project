@@ -106,3 +106,12 @@ The 'Offer Comparison' tab is useful for comparing salary offers across two citi
 3) the discretionary income (2-1) after accounting for cost of living
 
 
+## Website
+
+Link: https://nonajiang.github.io/Checks-and-Cities/
+
+## Screencast 
+
+Link: https://www.youtube.com/watch?v=jtnf0ZYH_Fs
+
+
