@@ -193,16 +193,16 @@ cost_table</code></pre>
 <pre><code>## # A tibble: 64 x 3
 ##    Restaurants                                           Edit    Range         
 ##    &lt;chr&gt;                                                 &lt;chr&gt;   &lt;chr&gt;         
-##  1 Meal, Inexpensive Restaurant                          20.00 $ &quot;15.00-38.00&quot; 
-##  2 Meal for 2 People, Mid-range Restaurant, Three-course 90.00 $ &quot;60.00-130.00&quot;
+##  1 Meal, Inexpensive Restaurant                          20.00 $ &quot;14.00-38.00&quot; 
+##  2 Meal for 2 People, Mid-range Restaurant, Three-course 87.50 $ &quot;60.00-130.00&quot;
 ##  3 McMeal at McDonalds (or Equivalent Combo Meal)        10.00 $ &quot;8.00-11.75&quot;  
-##  4 Domestic Beer (1 pint draught)                        7.00 $  &quot;4.50-8.00&quot;   
+##  4 Domestic Beer (1 pint draught)                        7.00 $  &quot;4.00-9.00&quot;   
 ##  5 Imported Beer (12 oz small bottle)                    8.00 $  &quot;7.00-10.00&quot;  
-##  6 Cappuccino (regular)                                  4.56 $  &quot;3.00-5.00&quot;   
-##  7 Coke/Pepsi (12 oz small bottle)                       2.38 $  &quot;1.75-4.00&quot;   
-##  8 Water (12 oz small bottle)                            1.74 $  &quot;1.19-2.50&quot;   
+##  6 Cappuccino (regular)                                  4.60 $  &quot;3.00-5.00&quot;   
+##  7 Coke/Pepsi (12 oz small bottle)                       2.36 $  &quot;1.75-4.00&quot;   
+##  8 Water (12 oz small bottle)                            1.77 $  &quot;1.19-2.50&quot;   
 ##  9 Markets                                               Edit    &quot;&quot;            
-## 10 Milk (regular), (1 gallon)                            3.58 $  &quot;2.50-4.00&quot;   
+## 10 Milk (regular), (1 gallon)                            3.60 $  &quot;2.50-4.00&quot;   
 ## # ... with 54 more rows</code></pre>
 <pre class="r"><code># cost of housing metrics
 # cost per sq ft in city center
@@ -255,12 +255,12 @@ head(boston)</code></pre>
 <pre><code>## # A tibble: 6 x 2
 ##   metrics                                                                  price
 ##   &lt;chr&gt;                                                                    &lt;dbl&gt;
-## 1 Apartment (1 bedroom) in City Centre                                     2585.
-## 2 Apartment (1 bedroom) Outside of Centre                                  1912.
-## 3 Average Monthly Net Salary (After Tax)                                   5753.
-## 4 Meal, Inexpensive Restaurant                                               20 
-## 5 Meal for 2 People, Mid-range Restaurant, Three-course                      90 
-## 6 Basic (Electricity, Heating, Cooling, Water, Garbage) for 915 sq ft Apa~  190.</code></pre>
+## 1 Apartment (1 bedroom) in City Centre                                    2594. 
+## 2 Apartment (1 bedroom) Outside of Centre                                 1922. 
+## 3 Average Monthly Net Salary (After Tax)                                  5753. 
+## 4 Meal, Inexpensive Restaurant                                              20  
+## 5 Meal for 2 People, Mid-range Restaurant, Three-course                     87.5
+## 6 Basic (Electricity, Heating, Cooling, Water, Garbage) for 915 sq ft Ap~  187.</code></pre>
 <pre class="r"><code># add a column with city name, will need to be made into a function
 boston &lt;- boston %&gt;% 
   mutate(city = &quot;boston&quot;) 
@@ -287,12 +287,12 @@ boston %&gt;%  pander()</code></pre>
 <tbody>
 <tr class="odd">
 <td align="center">Apartment (1 bedroom) in City Centre</td>
-<td align="center">2585</td>
+<td align="center">2594</td>
 <td align="center">boston</td>
 </tr>
 <tr class="even">
 <td align="center">Apartment (1 bedroom) Outside of Centre</td>
-<td align="center">1912</td>
+<td align="center">1922</td>
 <td align="center">boston</td>
 </tr>
 <tr class="odd">
@@ -307,12 +307,12 @@ boston %&gt;%  pander()</code></pre>
 </tr>
 <tr class="odd">
 <td align="center">Meal for 2 People, Mid-range Restaurant, Three-course</td>
-<td align="center">90</td>
+<td align="center">87.5</td>
 <td align="center">boston</td>
 </tr>
 <tr class="even">
 <td align="center">Basic (Electricity, Heating, Cooling, Water, Garbage) for 915 sq ft Apartment</td>
-<td align="center">189.8</td>
+<td align="center">187.2</td>
 <td align="center">boston</td>
 </tr>
 <tr class="odd">
