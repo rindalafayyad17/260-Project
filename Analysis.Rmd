@@ -72,6 +72,7 @@ plotcp(fit_rpart)
 p <- prune(fit_rpart, cp = 0.022)
 rpart.plot(p, digits = 4)
 ```
+
 The __best__ Decision Tree tells us that the average monthly net salary is 
 
 * `$`6127 in the cities where an apartment outside of the center costs more than `$`1476.
